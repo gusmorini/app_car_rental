@@ -83,7 +83,14 @@ class CarBrandController extends Controller
             $dinamic_rules = $brand->rules();
         }
 
-        $request->validate($dinamic_rules, $brand->feedback());
+        $name = $request->name;
+        $image = $request->file('image');
+        $image_urn = $image->store('img/brand', 'public');
+
+        $request->validate($dinamic_rules, [
+            'name' => $name,
+            'image' => $image_urn,
+        ]);
         
         $brand->update($request->all());
         return response()->json($brand, 200);
