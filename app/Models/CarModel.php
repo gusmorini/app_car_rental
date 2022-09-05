@@ -21,4 +21,8 @@ class CarModel extends Model
             'abs' => 'required|boolean'
         ];
     }
+
+    public function carBrand(){
+        return $this->belongsTo('App\Models\CarBrand');
+    }
 }

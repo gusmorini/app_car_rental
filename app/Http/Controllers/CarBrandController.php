@@ -18,7 +18,7 @@ class CarBrandController extends Controller
      */
     public function index()
     {
-        $brands = $this->brand->all();
+        $brands = $this->brand->with('carModels')->get();
         return response()->json($brands, 200);
     }
 
@@ -55,7 +55,7 @@ class CarBrandController extends Controller
      */
     public function show($id)
     {
-        $brand = $this->brand->find($id);
+        $brand = $this->brand->with('carModels')->find($id);
         if (!$brand) return response()->json(['error' => 'item not found'], 404);
         return response()->json($brand, 200);
     }

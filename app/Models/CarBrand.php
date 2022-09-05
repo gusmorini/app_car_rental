@@ -26,4 +26,8 @@ class CarBrand extends Model
             'image.mimes' => 'the file must be of type png'
         ];
     }
+
+    public function carModels() {
+        return $this->hasMany('App\Models\CarModel');
+    }
 }
