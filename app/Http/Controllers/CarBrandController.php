@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarBrand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CarBrandController extends Controller
 {
@@ -85,6 +86,12 @@ class CarBrandController extends Controller
 
         $name = $request->name;
         $image = $request->file('image');
+
+        // delete old image on disk
+        if ($image) {
+            Storage::disk('public')->delete($brand->image);
+        }
+
         $image_urn = $image->store('img/brand', 'public');
 
         $request->validate($dinamic_rules, $brand->feedback());
@@ -93,7 +100,7 @@ class CarBrandController extends Controller
             'name' => $name,
             'image' => $image_urn,
         ]);
-        
+
         return response()->json($brand, 200);
     }
 
@@ -107,6 +114,12 @@ class CarBrandController extends Controller
     {
         $brand = $this->brand->find($id);
         if (!$brand) return response()->json(['error' => 'deletion failed, item not found'], 404);
+
+        // delete image on disk if isset
+        if ($brand->image) {
+            Storage::disk('public')->delete($brand->image);
+        }
+
         $brand->delete();
         return response()->json(['msg' => 'the tag has been successfully removed'], 200);
     }
