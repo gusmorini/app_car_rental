@@ -30,20 +30,11 @@ class CarBrandController extends Controller
      */
     public function store(Request $request)
     {
-
         $request->validate($this->brand->rules(), $this->brand->feedback());
-        
-        $image = $request->file('image');
-        $urn_image = $image->store('img/car_brands', 'public');
-        $name = $request->name;
-
-        // dd($urn_image);
-
-        $brand = $this->brand->create([
-            'name' => $name,
-            'image' => $urn_image,
-        ]);
-
+        $data = $request->all();
+        // save image in store and update data image path
+        $data['image'] = $data['image']->store('img/car_brands', 'public');
+        $brand = $this->brand->create($data);
         return response()->json($brand, 201);
     }
 
@@ -83,24 +74,19 @@ class CarBrandController extends Controller
         } else {
             $dinamic_rules = $brand->rules();
         }
-
-        $name = $request->name;
-        $image = $request->file('image');
-
-        // delete old image on disk
-        if ($image) {
-            Storage::disk('public')->delete($brand->image);
-        }
-
-        $image_urn = $image->store('img/car_brands', 'public');
-
-        $request->validate($dinamic_rules, $brand->feedback());
         
-        $brand->update([
-            'name' => $name,
-            'image' => $image_urn,
-        ]);
+        $request->validate($dinamic_rules, $brand->feedback());
 
+        $data = $request->all();
+
+        if(isset($data['image'])) {
+            // delete old image
+            Storage::disk('public')->delete($brand->image);
+            // save image on disk and urn image on data
+            $data['image'] = $data['image']->store('img/car_brands', 'public');
+        }
+        
+        $brand->update($data);
         return response()->json($brand, 200);
     }
 
