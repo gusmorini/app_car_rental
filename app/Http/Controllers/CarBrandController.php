@@ -34,7 +34,7 @@ class CarBrandController extends Controller
         $request->validate($this->brand->rules(), $this->brand->feedback());
         
         $image = $request->file('image');
-        $urn_image = $image->store('img/brand', 'public');
+        $urn_image = $image->store('img/car_brands', 'public');
         $name = $request->name;
 
         // dd($urn_image);
@@ -92,7 +92,7 @@ class CarBrandController extends Controller
             Storage::disk('public')->delete($brand->image);
         }
 
-        $image_urn = $image->store('img/brand', 'public');
+        $image_urn = $image->store('img/car_brands', 'public');
 
         $request->validate($dinamic_rules, $brand->feedback());
         
