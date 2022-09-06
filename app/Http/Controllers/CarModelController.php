@@ -16,10 +16,18 @@ class CarModelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $model = $this->model->with('carBrand')->get();
-        return response()->json($model, 200);
+        $data = array();
+
+        if ($request->has('filter')) {
+            $filter = $request->filter;
+            $data = $this->model->selectRaw($filter)->with('carBrand')->get();
+        } else {
+            $data = $this->model->with('carBrand')->get();
+        }
+
+        return response()->json($data, 200);
     }
 
     /**
