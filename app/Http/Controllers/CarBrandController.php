@@ -16,10 +16,33 @@ class CarBrandController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $brands = $this->brand->with('carModels')->get();
-        return response()->json($brands, 200);
+        $data = $this->brand;
+        // filter brands
+        if ($request->has('filter')) {
+            if ($request->filter != '') {
+                $data = $data->selectRaw('id,'.$request->filter);
+            }
+        }
+        // optional models and filters models
+        if ($request->has('models')) {
+            if ($request->models == '') {
+                $data = $data->with('carModels');
+            } else {
+                $data = $data->with('carModels:id,car_brand_id,'.$request->models);
+            }
+        }
+        // search filter
+        if($request->has('search')) {
+            $searchs = explode(';', $request->search);
+            foreach($searchs as $key => $value) {
+                $query_array = explode('.', $value);
+                $data = $data->where(...$query_array);
+            }
+        }
+        $data = $data->get();
+        return response()->json($data, 200);
     }
 
     /**

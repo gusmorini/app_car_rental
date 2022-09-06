@@ -18,13 +18,26 @@ class CarModelController extends Controller
      */
     public function index(Request $request)
     {
-        $data = array();
+        $data = $this->model;
 
-        if ($request->has('filter')) {
-            $filter = $request->filter;
-            $data = $this->model->selectRaw($filter)->with('carBrand')->get();
+        if ($request->has('filter_brand')) {
+            $data = $data->with('carBrand:id,'.$request->filter_brand);
         } else {
-            $data = $this->model->with('carBrand')->get();
+            $data = $data->with('carBrand');
+        }
+
+        if($request->has('search')) {
+            $searchs = explode(';', $request->search);
+            foreach($searchs as $key => $value) {
+                $query_array = explode('.', $value);
+                $data = $data->where(...$query_array);
+            }
+        }
+
+        if ($request->has('filter_model')) {
+            $data = $data->selectRaw('car_brand_id,'.$request->filter_model)->get();
+        } else {
+            $data = $data->get();
         }
 
         return response()->json($data, 200);
