@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CarModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\ModelRepository;
 
 class CarModelController extends Controller
 {
@@ -18,29 +19,34 @@ class CarModelController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $this->model;
+
+        // $data = $this->model;
+
+        $modelRepository = new ModelRepository($this->model);
 
         if ($request->has('filter_brand')) {
-            $data = $data->with('carBrand:id,'.$request->filter_brand);
+            // $data = $data->with('carBrand:id,'.$request->filter_brand);
+            $modelRepository->selectRelatedAttributes('carBrand:id,'.$request->filter_brand);
         } else {
-            $data = $data->with('carBrand');
+            // $data = $data->with('carBrand');
+            $modelRepository->selectRelatedAttributes('carBrand');
         }
 
         if($request->has('search')) {
-            $searchs = explode(';', $request->search);
-            foreach($searchs as $key => $value) {
-                $query_array = explode('.', $value);
-                $data = $data->where(...$query_array);
-            }
+            // $searchs = explode('|', $request->search);
+            // foreach($searchs as $key => $value) {
+            //     $query_array = explode(',', $value);
+            //     $data = $data->where(...$query_array);
+            // }
+            $modelRepository->selectSearchAttributes($request->search);
         }
 
         if ($request->has('filter_model')) {
-            $data = $data->selectRaw('car_brand_id,'.$request->filter_model)->get();
-        } else {
-            $data = $data->get();
+            // $data = $data->selectRaw('car_brand_id,'.$request->filter_model)->get();
+            $modelRepository->selectFilterAttributes('car_brand_id,'.$request->filter_model);
         }
 
-        return response()->json($data, 200);
+        return response()->json($modelRepository->get(), 200);
     }
 
     /**

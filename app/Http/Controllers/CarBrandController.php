@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CarBrand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\BrandRepository;
 
 class CarBrandController extends Controller
 {
@@ -18,31 +19,26 @@ class CarBrandController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $this->brand;
-        // filter brands
-        if ($request->has('filter')) {
-            if ($request->filter != '') {
-                $data = $data->selectRaw('id,'.$request->filter);
-            }
-        }
+        $brandRepository = new BrandRepository($this->brand);
+
         // optional models and filters models
         if ($request->has('models')) {
             if ($request->models == '') {
-                $data = $data->with('carModels');
+                $brandRepository->selectRelatedAttributes('carModels');
             } else {
-                $data = $data->with('carModels:id,car_brand_id,'.$request->models);
+                $brandRepository->selectRelatedAttributes('carModels:id,car_brand_id,'.$request->models);
             }
         }
         // search filter
         if($request->has('search')) {
-            $searchs = explode(';', $request->search);
-            foreach($searchs as $key => $value) {
-                $query_array = explode('.', $value);
-                $data = $data->where(...$query_array);
-            }
+            $brandRepository->selectSearchAttributes($request->search);
         }
-        $data = $data->get();
-        return response()->json($data, 200);
+
+        // filter brands
+        if ($request->has('filter')) {
+            $brandRepository->selectFilterAttributes('id,'.$request->filter);
+        }
+        return response()->json($brandRepository->get(), 200);
     }
 
     /**
