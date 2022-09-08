@@ -2,31 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
+use App\Repositories\ClientRepository;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    public function __construct(Client $client){
+        $this->client = $client;
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        return ['message'=>'client list'];
-    }
+        $clientRepository = new ClientRepository($this->client);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        // if ($request->has('filter_model')) {
+        //     $clientRepository->selectRelatedAttributes('carModel:id,'.$request->filter_model);
+        // } else {
+        //     $clientRepository->selectRelatedAttributes('carModel');
+        // }
+
+        if($request->has('search')) {
+            $clientRepository->selectSearchAttributes($request->search);
+        }
+
+        return response()->json($clientRepository->get(), 200);
     }
 
     /**
@@ -35,9 +39,12 @@ class ClientController extends Controller
      * @param  \App\Http\Requests\StoreClientRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreClientRequest $request)
+    public function store(Request $request)
     {
-        //
+        $clientRepository = new ClientRepository($this->client);
+        $clientRepository->validateAttributes($request);
+        $data = $clientRepository->saveAttributes($request->all());
+        return response()->json($data, 201);
     }
 
     /**
@@ -46,20 +53,12 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function show(Client $client)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Client $client)
-    {
-        //
+        $clientRepository = new ClientRepository($this->client);
+        $clientRepository->getById($id);
+        if (!$clientRepository->model) return response()->json(['error' => 'item not found'], 404);
+        return response()->json($clientRepository, 200);
     }
 
     /**
@@ -69,19 +68,28 @@ class ClientController extends Controller
      * @param  \App\Models\Client  $client
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(Request $request, $id)
     {
-        //
+        $clientRepository = new ClientRepository($this->client);
+        $clientRepository->getById($id);
+        if (!$clientRepository->model) return response()->json(['error' => 'item not found'], 404);
+        $clientRepository->validateAttributes($request);
+        $clientRepository->updateAttributes($request->all());
+        return response()->json($clientRepository, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Client  $client
+     * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Client $client)
+    public function destroy($id)
     {
-        //
+        $clientRepository = new ClientRepository($this->client);
+        $clientRepository->getById($id);
+        if (!$clientRepository->model) return response()->json(['error' => 'item not found'], 404);
+        $clientRepository->destroy();
+        return response()->json(['msg' => 'the client was successfully removed'], 200);
     }
 }

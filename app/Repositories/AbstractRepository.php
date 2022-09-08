@@ -30,4 +30,41 @@
       return $this->model->get();
     }
 
+    public function getById($id) {
+      $this->model = $this->model->find($id);
+    }
+
+    public function validateAttributes($request) {    
+      $dinamic_rules = array();
+
+      $method = $request->method();
+      $attributes = $request->all();
+
+      if ($method === 'PATCH') {
+          foreach($this->model->rules() as $key => $value) {
+              if (array_key_exists($key, $attributes)){
+                  $dinamic_rules[$key] = $value;
+              }
+          }
+      } else {
+          $dinamic_rules = $this->model->rules();
+      }
+      
+      $request->validate($dinamic_rules);
+
+    }
+
+    public function saveAttributes($attributes) {
+      return $this->model->create($attributes);
+    }
+
+    public function updateAttributes($attributes) {
+      return $this->model->update($attributes);
+    }
+
+    public function destroy() {
+      $this->model->delete();
+    }
+
+
   }

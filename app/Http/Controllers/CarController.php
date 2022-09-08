@@ -45,10 +45,6 @@ class CarController extends Controller
     {
         $request->validate($this->car->rules());
         $data = $request->all();
-        // if (isset($data['image'])) {
-        //     // save image on disk and update data attribute image
-        //     $data['image'] = $data['image']->store('img/car_models', 'public');
-        // }
         $car = $this->car->create($data);
         return response()->json($car, 201);
     }
