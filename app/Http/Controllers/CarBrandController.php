@@ -23,20 +23,17 @@ class CarBrandController extends Controller
 
         // optional models and filters models
         if ($request->has('models')) {
-            if ($request->models == '') {
-                $brandRepository->selectRelatedAttributes('carModels');
-            } else {
-                $brandRepository->selectRelatedAttributes('carModels:id,car_brand_id,'.$request->models);
-            }
+            $brandRepository->selectRelatedAttributes('carModels:id,car_brand_id,'.$request->models);
+        } else {
+            $brandRepository->selectRelatedAttributes('carModels');
+        }
+        // filter brands
+        if ($request->has('filter')) {
+            $brandRepository->selectFilterAttributes('id,'.$request->filter);
         }
         // search filter
         if($request->has('search')) {
             $brandRepository->selectSearchAttributes($request->search);
-        }
-
-        // filter brands
-        if ($request->has('filter')) {
-            $brandRepository->selectFilterAttributes('id,'.$request->filter);
         }
         return response()->json($brandRepository->get(), 200);
     }
@@ -63,10 +60,10 @@ class CarBrandController extends Controller
      * @param  Integer
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $brand = $this->brand->with('carModels')->find($id);
-        if (!$brand) return response()->json(['error' => 'item not found'], 404);
+        if (!$brand) return response()->json(['error' => 'update failed, item not found'], 404);
         return response()->json($brand, 200);
     }
 

@@ -20,30 +20,20 @@ class CarModelController extends Controller
     public function index(Request $request)
     {
 
-        // $data = $this->model;
-
         $modelRepository = new ModelRepository($this->model);
 
         if ($request->has('filter_brand')) {
-            // $data = $data->with('carBrand:id,'.$request->filter_brand);
             $modelRepository->selectRelatedAttributes('carBrand:id,'.$request->filter_brand);
         } else {
-            // $data = $data->with('carBrand');
             $modelRepository->selectRelatedAttributes('carBrand');
         }
 
-        if($request->has('search')) {
-            // $searchs = explode('|', $request->search);
-            // foreach($searchs as $key => $value) {
-            //     $query_array = explode(',', $value);
-            //     $data = $data->where(...$query_array);
-            // }
-            $modelRepository->selectSearchAttributes($request->search);
+        if ($request->has('filter_model')) {
+            $modelRepository->selectFilterAttributes('car_brand_id,'.$request->filter_model);
         }
 
-        if ($request->has('filter_model')) {
-            // $data = $data->selectRaw('car_brand_id,'.$request->filter_model)->get();
-            $modelRepository->selectFilterAttributes('car_brand_id,'.$request->filter_model);
+        if($request->has('search')) {
+            $modelRepository->selectSearchAttributes($request->search);
         }
 
         return response()->json($modelRepository->get(), 200);
