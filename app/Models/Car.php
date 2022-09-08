@@ -20,8 +20,12 @@ class Car extends Model
         ];
     }
 
-    public function carModel(){
+    public function carModel() {
         return $this->belongsTo('App\Models\CarModel');
+    }
+
+    public function location() {
+        return $this->hasMany('App\Models\Location');
     }
 
 }

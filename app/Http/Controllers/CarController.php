@@ -28,6 +28,8 @@ class CarController extends Controller
             $carRepository->selectRelatedAttributes('carModel');
         }
 
+        $carRepository->selectRelatedAttributes('location');
+
         if($request->has('search')) {
             $carRepository->selectSearchAttributes($request->search);
         }

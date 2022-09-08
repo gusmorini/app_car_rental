@@ -26,6 +26,8 @@ class ClientController extends Controller
         //     $clientRepository->selectRelatedAttributes('carModel');
         // }
 
+        $clientRepository->selectRelatedAttributes('location');
+
         if($request->has('search')) {
             $clientRepository->selectSearchAttributes($request->search);
         }

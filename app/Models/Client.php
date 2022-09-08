@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
+
     protected $fillable = ['name'];
 
     public function rules() {
         return ['name' => 'required|unique:clients,name,'.$this->id.'|min:3'];
     }
 
-    // public function carModel(){
-    //     return $this->belongsTo('App\Models\CarModel');
-    // }
+    public function location() {
+        return $this->hasMany('App\Models\Location');
+    }
 }
