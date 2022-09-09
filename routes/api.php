@@ -24,6 +24,8 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function(){
     Route::apiResource('brand', 'App\Http\Controllers\CarBrandController');
     Route::apiResource('model', 'App\Http\Controllers\CarModelController');
     Route::apiResource('car', 'App\Http\Controllers\CarController');
+    // auth-routes
+    Route::post('me', 'App\Http\Controllers\AuthController@me');
 });
 /**
  * auth-routes
@@ -31,4 +33,3 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function(){
 Route::post('login', 'App\Http\Controllers\AuthController@login');
 Route::post('logout', 'App\Http\Controllers\AuthController@logout');
 Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
-Route::post('me', 'App\Http\Controllers\AuthController@me');
