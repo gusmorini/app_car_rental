@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Client;
 
 class ClientSeeder extends Seeder
 {
@@ -13,6 +14,14 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $data = [
+            ['name' => 'marcos'],
+            ['name' => 'maria'],
+            ['name' => 'pedro'],
+        ];
+
+        foreach ($data as $key) {
+            Client::create($key);
+        }
     }
 }
