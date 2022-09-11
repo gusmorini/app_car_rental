@@ -3,10 +3,19 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">login (vue component)</div>
-
+                    <div class="card-header">Login (vue component)</div>
                     <div class="card-body">
-                        <form method="POST" action="">
+                        <form
+                            method="POST"
+                            action=""
+                            @submit.prevent="login($event)"
+                        >
+                            <input
+                                type="hidden"
+                                name="_token"
+                                :value="csrf_token"
+                            />
+
                             <div class="row mb-3">
                                 <label
                                     for="email"
@@ -16,11 +25,11 @@
 
                                 <div class="col-md-6">
                                     <input
+                                        v-model="email"
                                         id="email"
                                         type="email"
                                         class="form-control"
                                         name="email"
-                                        value=""
                                         required
                                         autocomplete="email"
                                         autofocus
@@ -47,6 +56,7 @@
                                         name="password"
                                         required
                                         autocomplete="current-password"
+                                        v-model="password"
                                     />
 
                                     <span class="invalid-feedback" role="alert">
@@ -99,8 +109,34 @@
 
 <script>
 export default {
-    mounted() {
-        console.log("Component login mounted.");
+    props: ["csrf_token"],
+    data() {
+        return {
+            email: "",
+            password: "",
+        };
+    },
+    methods: {
+        login(e) {
+            const url = "http://127.0.0.1:8000/api/login";
+            const params = {
+                method: "POST",
+                body: new URLSearchParams({
+                    email: this.email,
+                    password: this.password,
+                }),
+            };
+            fetch(url, params)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.token) {
+                        document.cookie = `token=${data.token};SameSite=Lax`;
+                    }
+                    // continua o fluxo do form enviando os dados
+                    e.target.submit();
+                })
+                .catch((e) => console.log(e));
+        },
     },
 };
 </script>

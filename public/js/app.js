@@ -5333,8 +5333,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mounted: function mounted() {
-    console.log("Component login mounted.");
+  props: ["csrf_token"],
+  data: function data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+  methods: {
+    login: function login(e) {
+      var url = "http://127.0.0.1:8000/api/login";
+      var params = {
+        method: "POST",
+        body: new URLSearchParams({
+          email: this.email,
+          password: this.password
+        })
+      };
+      fetch(url, params).then(function (res) {
+        return res.json();
+      }).then(function (data) {
+        if (data.token) {
+          document.cookie = "token=".concat(data.token, ";SameSite=Lax");
+        } // continua o fluxo do form enviando os dados
+
+
+        e.target.submit();
+      })["catch"](function (e) {
+        return console.log(e);
+      });
+    }
   }
 });
 
@@ -5398,13 +5426,6 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _vm._m(0);
-};
-
-var staticRenderFns = [function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
   return _c("div", {
     staticClass: "container"
   }, [_c("div", {
@@ -5415,14 +5436,28 @@ var staticRenderFns = [function () {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header"
-  }, [_vm._v("login (vue component)")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Login (vue component)")]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("form", {
     attrs: {
       method: "POST",
       action: ""
+    },
+    on: {
+      submit: function submit($event) {
+        $event.preventDefault();
+        return _vm.login($event);
+      }
     }
-  }, [_c("div", {
+  }, [_c("input", {
+    attrs: {
+      type: "hidden",
+      name: "_token"
+    },
+    domProps: {
+      value: _vm.csrf_token
+    }
+  }), _vm._v(" "), _c("div", {
     staticClass: "row mb-3"
   }, [_c("label", {
     staticClass: "col-md-4 col-form-label text-md-end",
@@ -5432,22 +5467,31 @@ var staticRenderFns = [function () {
   }, [_vm._v("E-mail")]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.email,
+      expression: "email"
+    }],
     staticClass: "form-control",
     attrs: {
       id: "email",
       type: "email",
       name: "email",
-      value: "",
       required: "",
       autocomplete: "email",
       autofocus: ""
+    },
+    domProps: {
+      value: _vm.email
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.email = $event.target.value;
+      }
     }
-  }), _vm._v(" "), _c("span", {
-    staticClass: "invalid-feedback",
-    attrs: {
-      role: "alert"
-    }
-  }, [_c("strong", [_vm._v("teste")])])])]), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm._m(0)])]), _vm._v(" "), _c("div", {
     staticClass: "row mb-3"
   }, [_c("label", {
     staticClass: "col-md-4 col-form-label text-md-end",
@@ -5457,6 +5501,12 @@ var staticRenderFns = [function () {
   }, [_vm._v("Senha")]), _vm._v(" "), _c("div", {
     staticClass: "col-md-6"
   }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.password,
+      expression: "password"
+    }],
     staticClass: "form-control",
     attrs: {
       id: "password",
@@ -5464,13 +5514,44 @@ var staticRenderFns = [function () {
       name: "password",
       required: "",
       autocomplete: "current-password"
+    },
+    domProps: {
+      value: _vm.password
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.password = $event.target.value;
+      }
     }
-  }), _vm._v(" "), _c("span", {
+  }), _vm._v(" "), _vm._m(1)])]), _vm._v(" "), _vm._m(2), _vm._v(" "), _vm._m(3)])])])])])]);
+};
+
+var staticRenderFns = [function () {
+  var _vm = this,
+      _c = _vm._self._c;
+
+  return _c("span", {
     staticClass: "invalid-feedback",
     attrs: {
       role: "alert"
     }
-  }, [_c("strong", [_vm._v("teste")])])])]), _vm._v(" "), _c("div", {
+  }, [_c("strong", [_vm._v("teste")])]);
+}, function () {
+  var _vm = this,
+      _c = _vm._self._c;
+
+  return _c("span", {
+    staticClass: "invalid-feedback",
+    attrs: {
+      role: "alert"
+    }
+  }, [_c("strong", [_vm._v("teste")])]);
+}, function () {
+  var _vm = this,
+      _c = _vm._self._c;
+
+  return _c("div", {
     staticClass: "row mb-3"
   }, [_c("div", {
     staticClass: "col-md-6 offset-md-4"
@@ -5488,7 +5569,12 @@ var staticRenderFns = [function () {
     attrs: {
       "for": "remember"
     }
-  }, [_vm._v("\n                                        Relembre-me\n                                    ")])])])]), _vm._v(" "), _c("div", {
+  }, [_vm._v("\n                                        Relembre-me\n                                    ")])])])]);
+}, function () {
+  var _vm = this,
+      _c = _vm._self._c;
+
+  return _c("div", {
     staticClass: "row mb-0"
   }, [_c("div", {
     staticClass: "col-md-8 offset-md-4"
@@ -5502,7 +5588,7 @@ var staticRenderFns = [function () {
     attrs: {
       href: ""
     }
-  }, [_vm._v("\n                                    esqueci a senha\n                                ")])])])])])])])])]);
+  }, [_vm._v("\n                                    esqueci a senha\n                                ")])])]);
 }];
 render._withStripped = true;
 
