@@ -20,3 +20,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//routes authenticate
+Route::middleware('auth')->group(function(){
+    Route::get('/brands', function(){
+        return view('app.brands');
+    })->name('brands');
+});
