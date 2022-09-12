@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="mb-4">
     <label :for="id" class="form-label">{{ title }}</label>
     <slot></slot>
-    <div :id="idhelp" class="form-text">
+    <div :id="id+'-help'" class="form-text">
       {{ helptext }}
     </div>
   </div>
@@ -10,6 +10,6 @@
 
 <script>
 export default {
-  props: ['type', 'id', 'title', 'idhelp', 'helptext'],
+  props: ['type', 'id', 'title', 'helptext'],
 }
 </script>

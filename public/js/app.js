@@ -5398,7 +5398,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['type', 'id', 'title', 'idhelp', 'helptext']
+  props: ['type', 'id', 'title', 'helptext']
 });
 
 /***/ }),
@@ -5468,7 +5468,6 @@ var render = function render() {
           attrs: {
             id: "brand-id",
             title: "id da marca",
-            idhelp: "brand-id-help",
             helptext: "opcional, informe o id da marca"
           }
         }, [_c("input", {
@@ -5485,7 +5484,6 @@ var render = function render() {
           attrs: {
             id: "brand-name",
             title: "nome da marca",
-            idhelp: "brand-name-help",
             helptext: "opcional, informe o nome da marca"
           }
         }, [_c("input", {
@@ -5539,8 +5537,58 @@ var render = function render() {
     attrs: {
       id: "addBrand",
       title: "Adicionar Marca"
-    }
-  }, [_vm._v("\n        conteúdo modal\n    ")])], 1);
+    },
+    scopedSlots: _vm._u([{
+      key: "body",
+      fn: function fn() {
+        return [_c("input-container-component", {
+          attrs: {
+            id: "add-brand-name",
+            title: "nome da marca",
+            helptext: "informe o nome da marca"
+          }
+        }, [_c("input", {
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            id: "add-brand-name",
+            "aria-describedby": "add-brand-name-help",
+            placeholder: "nome da nova marca"
+          }
+        })]), _vm._v(" "), _c("input-container-component", {
+          attrs: {
+            id: "add-brand-image",
+            title: "imagem da marca",
+            helptext: "escolha uma imagem no formato png"
+          }
+        }, [_c("input", {
+          staticClass: "form-control",
+          attrs: {
+            type: "file",
+            id: "formFile"
+          }
+        })])];
+      },
+      proxy: true
+    }, {
+      key: "footer",
+      fn: function fn() {
+        return [_c("button", {
+          staticClass: "btn btn-secondary",
+          attrs: {
+            type: "button",
+            "data-bs-dismiss": "modal"
+          }
+        }, [_vm._v("Fechar")]), _vm._v(" "), _c("button", {
+          staticClass: "btn btn-primary",
+          attrs: {
+            type: "button"
+          }
+        }, [_vm._v("Salvar")])];
+      },
+      proxy: true
+    }])
+  })], 1);
 };
 
 var staticRenderFns = [];
@@ -5827,7 +5875,9 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div", [_c("label", {
+  return _c("div", {
+    staticClass: "mb-4"
+  }, [_c("label", {
     staticClass: "form-label",
     attrs: {
       "for": _vm.id
@@ -5835,7 +5885,7 @@ var render = function render() {
   }, [_vm._v(_vm._s(_vm.title))]), _vm._v(" "), _vm._t("default"), _vm._v(" "), _c("div", {
     staticClass: "form-text",
     attrs: {
-      id: _vm.idhelp
+      id: _vm.id + "-help"
     }
   }, [_vm._v("\n    " + _vm._s(_vm.helptext) + "\n  ")])], 2);
 };
@@ -5890,28 +5940,12 @@ var render = function render() {
     }
   })]), _vm._v(" "), _c("div", {
     staticClass: "modal-body"
-  }, [_vm._t("default")], 2), _vm._v(" "), _vm._m(0)])])]);
+  }, [_vm._t("body")], 2), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_vm._t("footer")], 2)])])]);
 };
 
-var staticRenderFns = [function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
-  return _c("div", {
-    staticClass: "modal-footer"
-  }, [_c("button", {
-    staticClass: "btn btn-secondary",
-    attrs: {
-      type: "button",
-      "data-bs-dismiss": "modal"
-    }
-  }, [_vm._v("Fechar")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-primary",
-    attrs: {
-      type: "button"
-    }
-  }, [_vm._v("Salvar")])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 

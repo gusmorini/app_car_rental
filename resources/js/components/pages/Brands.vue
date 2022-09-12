@@ -6,7 +6,7 @@
                     <template v-slot:body>
                         <div class="row">
                             <div class="mb-3 col-sm">
-                                <input-container-component id="brand-id" title="id da marca" idhelp="brand-id-help"
+                                <input-container-component id="brand-id" title="id da marca"
                                     helptext="opcional, informe o id da marca">
                                     <input type="number" class="form-control" id="brand-id"
                                         aria-describedby="brand-id-help" placeholder="id da marca" />
@@ -14,7 +14,7 @@
                             </div>
                             <div class="mb-3 col-sm">
                                 <input-container-component id="brand-name" title="nome da marca"
-                                    idhelp="brand-name-help" helptext="opcional, informe o nome da marca">
+                                    helptext="opcional, informe o nome da marca">
                                     <input type="text" class="form-control" id="brand-name"
                                         aria-describedby="brand-name-help" placeholder="nome da marca" />
                                 </input-container-component>
@@ -39,9 +39,21 @@
         </div>
 
         <modal-component id="addBrand" title="Adicionar Marca">
-            conteúdo modal
+            <template v-slot:body>
+                <input-container-component id="add-brand-name" title="nome da marca" helptext="informe o nome da marca">
+                    <input type="text" class="form-control" id="add-brand-name" aria-describedby="add-brand-name-help"
+                        placeholder="nome da nova marca" />
+                </input-container-component>
+                <input-container-component id="add-brand-image" title="imagem da marca"
+                    helptext="escolha uma imagem no formato png">
+                    <input class="form-control" type="file" id="formFile">
+                </input-container-component>
+            </template>
+            <template v-slot:footer>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Salvar</button>
+            </template>
         </modal-component>
-
     </div>
 </template>
 
