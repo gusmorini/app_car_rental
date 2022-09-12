@@ -31,11 +31,17 @@
                         <table-component></table-component>
                     </template>
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-end">Adicionar</button>
+                        <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
+                            data-bs-target="#addBrand">Adicionar</button>
                     </template>
                 </card-component>
             </div>
         </div>
+
+        <modal-component id="addBrand" title="Adicionar Marca">
+            conteúdo modal
+        </modal-component>
+
     </div>
 </template>
 

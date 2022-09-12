@@ -27,14 +27,11 @@ window.Vue = require("vue").default;
 /**
  * PAGES
  */
-
 Vue.component(
     "login-component",
     require("./components/pages/Login.vue").default
 );
-
 Vue.component("home-component", require("./components/pages/Home.vue").default);
-
 Vue.component(
     "brands-component",
     require("./components/pages/Brands.vue").default
@@ -43,18 +40,19 @@ Vue.component(
 /**
  * PARTS
  */
-
 Vue.component(
     "input-container-component",
     require("./components/parts/InputContainer.vue").default
 );
-
 Vue.component(
     "table-component",
     require("./components/parts/Table.vue").default
 );
-
 Vue.component("card-component", require("./components/parts/Card.vue").default);
+Vue.component(
+    "modal-component",
+    require("./components/parts/Modal.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
