@@ -44,7 +44,7 @@
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Veículos</a>
                                 <div class="dropdown-menu">
                                     <a href="#" class="dropdown-item">Carros</a>
-                                    <a href="{{ route('brands') }}" class="dropdown-item">Marcas</a>
+                                    <a href="{{ route('marcas') }}" class="dropdown-item">Marcas</a>
                                     <a href="#" class="dropdown-item">Modelos</a>
                                 </div>
                             </li>
@@ -89,6 +89,17 @@
                 </div>
             </div>
         </nav>
+
+        @auth
+            <div class="container mt-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{Route::currentRouteName()}}</li>
+                    </ol>
+                </nav>
+            </div>
+        @endauth
 
         <main class="py-4">
             @yield('content')

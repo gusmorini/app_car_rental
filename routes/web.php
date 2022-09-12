@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return view('home');
 });
 
 Auth::routes();
@@ -24,5 +25,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware('auth')->group(function(){
     Route::get('/brands', function(){
         return view('app.brands');
-    })->name('brands');
+    })->name('marcas');
 });
