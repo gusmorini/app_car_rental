@@ -5322,7 +5322,15 @@ __webpack_require__.r(__webpack_exports__);
       brandImage: [],
       brands: [],
       type: null,
-      text: ''
+      text: '',
+      alert_destroy: {
+        type: null,
+        message: ''
+      },
+      alert_save: {
+        type: null,
+        message: ''
+      }
     };
   },
   mounted: function mounted() {
@@ -5350,24 +5358,38 @@ __webpack_require__.r(__webpack_exports__);
           'Content-Type': 'multipart/form-data'
         }
       }).then(function (res) {
-        _this2.type = 'success';
-        _this2.text = 'a marca foi registrada com sucesso';
+        _this2.alert_save = {
+          type: 'success',
+          message: 'a marca foi registrada'
+        };
 
         _this2.brands.push(res.data);
       })["catch"](function (e) {
-        _this2.type = 'danger';
-        _this2.text = e.response.data.errors;
+        _this2.alert_save = {
+          type: 'danger',
+          message: e.response.data.errors
+        };
         console.log(e.response.data.errors);
       });
     },
     brandDestroy: function brandDestroy(id) {
-      this.brands = this.brands.filter(function (e) {
-        return e.id != id;
-      });
+      var _this3 = this;
+
+      if (!confirm('Realmente apagar o regitro?')) return;
       _services_api__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"]("/brand/".concat(id)).then(function (res) {
-        console.log(res.data);
+        _this3.alert_destroy = {
+          type: 'success',
+          message: 'item foi deletado'
+        };
+        _this3.brands = _this3.brands.filter(function (e) {
+          return e.id != id;
+        });
       })["catch"](function (e) {
-        return console.log(e);
+        _this3.alert_destroy = {
+          type: 'danger',
+          message: 'erro ao deletar registro'
+        };
+        console.log(e.response);
       });
     }
   }
@@ -5463,10 +5485,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['type', 'text'],
+  props: ['type', 'text', 'data'],
   computed: {
     classAlert: function classAlert() {
-      return 'alert alert-' + this.type;
+      return "alert alert-".concat(this.data.type ? this.data.type : 'primary');
     }
   }
 });
@@ -5626,7 +5648,7 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "body",
       fn: function fn() {
-        return [_c("table-component", {
+        return [_vm.brands.length > 0 ? [_c("table-component", {
           attrs: {
             thead: ["#", "name", "image"]
           }
@@ -5659,7 +5681,11 @@ var render = function render() {
               }
             }
           }, [_vm._v("deletar")])])]);
-        })], 2)];
+        })], 2)] : [_c("div", [_vm._v("nenhum registro encontrado")])], _vm._v(" "), _vm.alert_destroy.message ? _c("alerts-component", {
+          attrs: {
+            data: _vm.alert_destroy
+          }
+        }) : _vm._e()];
       },
       proxy: true
     }, {
@@ -5733,13 +5759,12 @@ var render = function render() {
         })])];
       },
       proxy: true
-    }, _vm.type ? {
+    }, _vm.alert_save.message ? {
       key: "alerts",
       fn: function fn() {
         return [_c("alerts-component", {
           attrs: {
-            type: _vm.type,
-            text: _vm.text
+            data: _vm.alert_save
           }
         })];
       },
@@ -6028,11 +6053,11 @@ var render = function render() {
     attrs: {
       role: "alert"
     }
-  }, [_typeof(_vm.text) == "object" ? _vm._l(_vm.text, function (e, key) {
+  }, [_typeof(_vm.data.message) == "object" ? _vm._l(_vm.data.message, function (e, key) {
     return _c("div", {
       key: key
     }, [_vm._v(_vm._s(e[0]))]);
-  }) : [_vm._v("\n    " + _vm._s(_vm.text) + "\n  ")]], 2);
+  }) : [_vm._v("\n    " + _vm._s(_vm.data.message) + "\n  ")]], 2);
 };
 
 var staticRenderFns = [];

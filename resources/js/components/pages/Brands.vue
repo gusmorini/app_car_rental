@@ -29,20 +29,28 @@
                 <!-- table -->
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
-                        <table-component :thead="['#', 'name', 'image']">
-                            <template>
-                                <tr v-for="key in brands">
-                                    <th scope="row">{{ key.id }}</th>
-                                    <td class="text-uppercase">{{ key.name }}</td>
-                                    <td><img :src="'http://localhost:8000/storage/'+key.image" width="30" /></td>
-                                    <td width="140">
-                                        <a class="btn btn-sm btn-light" href="#">editar</a>
-                                        <button class="btn btn-sm btn-light"
-                                            @click="brandDestroy(key.id)">deletar</button>
-                                    </td>
-                                </tr>
-                            </template>
-                        </table-component>
+                        <template v-if="brands.length > 0">
+                            <table-component :thead="['#', 'name', 'image']">
+                                <template>
+                                    <tr v-for="key in brands">
+                                        <th scope="row">{{ key.id }}</th>
+                                        <td class="text-uppercase">{{ key.name }}</td>
+                                        <td><img :src="'http://localhost:8000/storage/'+key.image" width="30" /></td>
+                                        <td width="140">
+                                            <a class="btn btn-sm btn-light" href="#">editar</a>
+                                            <button class="btn btn-sm btn-light"
+                                                @click="brandDestroy(key.id)">deletar</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </table-component>
+                        </template>
+                        <template v-else>
+                            <div>nenhum registro encontrado</div>
+                        </template>
+
+                        <alerts-component :data="alert_destroy" v-if="alert_destroy.message" />
+
                     </template>
                     <template v-slot:footer>
                         <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
@@ -63,8 +71,8 @@
                     <input class="form-control" type="file" id="formFile" @change="loadImage($event)">
                 </input-container-component>
             </template>
-            <template v-slot:alerts v-if="type">
-                <alerts-component :type="type" :text="text" />
+            <template v-slot:alerts v-if="alert_save.message">
+                <alerts-component :data="alert_save" />
             </template>
             <template v-slot:footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -85,6 +93,14 @@ export default {
             brands: [],
             type: null,
             text: '',
+            alert_destroy: {
+                type: null,
+                message: ''
+            },
+            alert_save: {
+                type: null,
+                message: '',
+            }
         }
     },
     mounted() {
@@ -103,23 +119,39 @@ export default {
 
             api.post('/brand', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(res => {
-                    this.type = 'success';
-                    this.text = 'a marca foi registrada com sucesso';
+                    this.alert_save = {
+                        type: 'success',
+                        message: 'a marca foi registrada'
+                    }
                     this.brands.push(res.data);
                 })
                 .catch(e => {
-                    this.type = 'danger';
-                    this.text = e.response.data.errors;
+                    this.alert_save = {
+                        type: 'danger',
+                        message: e.response.data.errors
+                    }
                     console.log(e.response.data.errors)
                 })
         },
         brandDestroy(id) {
-            this.brands = this.brands.filter(e => e.id != id);
+
+            if (!confirm('Realmente apagar o regitro?')) return;
+
             api.delete(`/brand/${id}`)
                 .then(res => {
-                    console.log(res.data);
+                    this.alert_destroy = {
+                        type: 'success',
+                        message: 'item foi deletado'
+                    }
+                    this.brands = this.brands.filter(e => e.id != id);
                 })
-                .catch(e => console.log(e))
+                .catch(e => {
+                    this.alert_destroy = {
+                        type: 'danger',
+                        message: 'erro ao deletar registro'
+                    }
+                    console.log(e.response)
+                })
         }
     }
 }
