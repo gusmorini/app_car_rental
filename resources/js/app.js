@@ -53,6 +53,10 @@ Vue.component(
     "modal-component",
     require("./components/parts/Modal.vue").default
 );
+Vue.component(
+    "alerts-component",
+    require("./components/parts/Alert.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -25,10 +25,11 @@
                         <button type="submit" class="btn btn-primary btn-sm float-end">Pesquisar</button>
                     </template>
                 </card-component>
+
                 <!-- table -->
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
-                        <table-component :thead="['id', 'name', 'image']">
+                        <table-component :thead="['#', 'name', 'image']">
                             <template>
                                 <tr v-for="key in brands">
                                     <th scope="row">{{ key.id }}</th>
@@ -36,7 +37,8 @@
                                     <td><img :src="'http://localhost:8000/storage/'+key.image" width="30" /></td>
                                     <td width="140">
                                         <a class="btn btn-sm btn-light" href="#">editar</a>
-                                        <a class="btn btn-sm btn-light" href="#">deletar</a>
+                                        <button class="btn btn-sm btn-light"
+                                            @click="brandDestroy(key.id)">deletar</button>
                                     </td>
                                 </tr>
                             </template>
@@ -61,9 +63,12 @@
                     <input class="form-control" type="file" id="formFile" @change="loadImage($event)">
                 </input-container-component>
             </template>
+            <template v-slot:alerts v-if="type">
+                <alerts-component :type="type" :text="text" />
+            </template>
             <template v-slot:footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary" @click="saveData()">Salvar</button>
+                <button type="button" class="btn btn-primary" @click="brandSave()">Salvar</button>
             </template>
         </modal-component>
     </div>
@@ -78,6 +83,8 @@ export default {
             brandName: '',
             brandImage: [],
             brands: [],
+            type: null,
+            text: '',
         }
     },
     mounted() {
@@ -89,13 +96,29 @@ export default {
         loadImage(e) {
             this.brandImage = e.target.files
         },
-        saveData() {
+        brandSave() {
             let formData = new FormData();
             formData.append('name', this.brandName);
             formData.append('image', this.brandImage[0]);
 
             api.post('/brand', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-                .then(res => this.brands.push(res.data))
+                .then(res => {
+                    this.type = 'success';
+                    this.text = 'a marca foi registrada com sucesso';
+                    this.brands.push(res.data);
+                })
+                .catch(e => {
+                    this.type = 'danger';
+                    this.text = e.response.data.errors;
+                    console.log(e.response.data.errors)
+                })
+        },
+        brandDestroy(id) {
+            this.brands = this.brands.filter(e => e.id != id);
+            api.delete(`/brand/${id}`)
+                .then(res => {
+                    console.log(res.data);
+                })
                 .catch(e => console.log(e))
         }
     }

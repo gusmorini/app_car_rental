@@ -8,6 +8,7 @@
         </div>
         <div class="modal-body">
           <slot name="body"></slot>
+          <slot name="alerts"></slot>
         </div>
         <div class="modal-footer">
           <slot name="footer"></slot>
