@@ -28,7 +28,19 @@
                 <!-- table -->
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
-                        <table-component></table-component>
+                        <table-component :thead="['id', 'name', 'image']">
+                            <template>
+                                <tr v-for="key in brands">
+                                    <th scope="row">{{ key.id }}</th>
+                                    <td class="text-uppercase">{{ key.name }}</td>
+                                    <td><img :src="'http://localhost:8000/storage/'+key.image" width="30" /></td>
+                                    <td width="140">
+                                        <a class="btn btn-sm btn-light" href="#">editar</a>
+                                        <a class="btn btn-sm btn-light" href="#">deletar</a>
+                                    </td>
+                                </tr>
+                            </template>
+                        </table-component>
                     </template>
                     <template v-slot:footer>
                         <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
@@ -58,21 +70,20 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../../../../services/api';
 
 export default {
-    mounted() {
-        const urlBase = 'http://127.0.0.1:8000/api/v1/brand';
-        axios.get(urlBase)
-            .then(res => console.log(res))
-            .catch(err => console.log(err))
-    },
     data() {
         return {
-            urlBase: 'http://127.0.0.1:8000/api/v1/brand',
             brandName: '',
-            brandImage: []
+            brandImage: [],
+            brands: [],
         }
+    },
+    mounted() {
+        api.get('/brand')
+            .then(({ data }) => this.brands = data)
+            .catch(e => console.log(e))
     },
     methods: {
         loadImage(e) {
@@ -81,18 +92,11 @@ export default {
         saveData() {
             let formData = new FormData();
             formData.append('name', this.brandName);
-            formData.append('image', this.brandImage[0])
+            formData.append('image', this.brandImage[0]);
 
-            const config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Accept': 'application/json',
-                }
-            }
-
-            axios.post(this.urlBase, formData, config)
-                .then(response => console.log(response))
-                .catch(err => console.log(err))
+            api.post('/brand', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                .then(res => this.brands.push(res.data))
+                .catch(e => console.log(e))
         }
     }
 }

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../../../../services/api';
 
 export default {
     props: ["csrf_token"],
@@ -77,37 +77,16 @@ export default {
         };
     },
     methods: {
-        login(e) {
-            const url = "http://127.0.0.1:8000/api/login";
-            // const params = {
-            //     method: "POST",
-            //     body: new URLSearchParams({
-            //         email: this.email,
-            //         password: this.password,
-            //     }),
-            // };
-            // fetch(url, params)
-            //     .then((res) => res.json())
-            //     .then((data) => {
-            //         if (data.token) {
-            //             document.cookie = `token=${data.token};SameSite=Lax`;
-            //         }
-            //         // continua o fluxo do form enviando os dados
-            //         e.target.submit();
-            //     })
-            //     .catch((e) => console.log(e));
-            axios.post(url, {
-                email: this.email,
-                password: this.password
-            })
-                .then(response => {
-                    const { token } = response.data;
+        async login(e) {
+            api.post('/login', { email: this.email, password: this.password })
+                .then(({ data }) => {
+                    const { token } = data;
                     if (token) {
                         document.cookie = `token=${token};SameSite=Lax`;
+                        e.target.submit();
                     }
-                    e.target.submit();
                 })
-                .catch(err => console.log(err))
+                .catch(e => console.log(e));
         },
     },
 };
