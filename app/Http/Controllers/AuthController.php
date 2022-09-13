@@ -12,14 +12,14 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->all(['email', 'password']);
-        $token = auth()->attempt($credentials);
+        $token = auth('api')->attempt($credentials);
         if (!$token) return response()->json(['error' => 'invalid email or password'], 403);
         return response()->json(['token' => $token], 200);
     }
 
     public function me()
     {
-        $user = auth()->user();
+        $user = auth('api')->user();
         return response()->json($user);
     }
 
