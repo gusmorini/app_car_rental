@@ -37,24 +37,63 @@
                 </card-component>
             </div>
         </div>
-
+        <!-- modal -->
         <modal-component id="addBrand" title="Adicionar Marca">
             <template v-slot:body>
                 <input-container-component id="add-brand-name" title="nome da marca" helptext="informe o nome da marca">
                     <input type="text" class="form-control" id="add-brand-name" aria-describedby="add-brand-name-help"
-                        placeholder="nome da nova marca" />
+                        placeholder="nome da nova marca" v-model="brandName" />
                 </input-container-component>
                 <input-container-component id="add-brand-image" title="imagem da marca"
                     helptext="escolha uma imagem no formato png">
-                    <input class="form-control" type="file" id="formFile">
+                    <input class="form-control" type="file" id="formFile" @change="loadImage($event)">
                 </input-container-component>
             </template>
             <template v-slot:footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-primary" @click="saveData()">Salvar</button>
             </template>
         </modal-component>
     </div>
 </template>
 
-<script></script>
+<script>
+import axios from 'axios';
+
+export default {
+    mounted() {
+        const urlBase = 'http://127.0.0.1:8000/api/v1/brand';
+        axios.get(urlBase)
+            .then(res => console.log(res))
+            .catch(err => console.log(err))
+    },
+    data() {
+        return {
+            urlBase: 'http://127.0.0.1:8000/api/v1/brand',
+            brandName: '',
+            brandImage: []
+        }
+    },
+    methods: {
+        loadImage(e) {
+            this.brandImage = e.target.files
+        },
+        saveData() {
+            let formData = new FormData();
+            formData.append('name', this.brandName);
+            formData.append('image', this.brandImage[0])
+
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                }
+            }
+
+            axios.post(this.urlBase, formData, config)
+                .then(response => console.log(response))
+                .catch(err => console.log(err))
+        }
+    }
+}
+</script>

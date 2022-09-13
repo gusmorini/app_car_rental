@@ -5306,9 +5306,54 @@ module.exports = {
 /*!*******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/pages/Brands.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************************************************************************************************************************************/
-/***/ (() => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  mounted: function mounted() {
+    var urlBase = 'http://127.0.0.1:8000/api/v1/brand';
+    axios__WEBPACK_IMPORTED_MODULE_0___default().get(urlBase).then(function (res) {
+      return console.log(res);
+    })["catch"](function (err) {
+      return console.log(err);
+    });
+  },
+  data: function data() {
+    return {
+      urlBase: 'http://127.0.0.1:8000/api/v1/brand',
+      brandName: '',
+      brandImage: []
+    };
+  },
+  methods: {
+    loadImage: function loadImage(e) {
+      this.brandImage = e.target.files;
+    },
+    saveData: function saveData() {
+      var formData = new FormData();
+      formData.append('name', this.brandName);
+      formData.append('image', this.brandImage[0]);
+      var config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json'
+        }
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(this.urlBase, formData, config).then(function (response) {
+        return console.log(response);
+      })["catch"](function (err) {
+        return console.log(err);
+      });
+    }
+  }
+});
 
 /***/ }),
 
@@ -5333,6 +5378,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["csrf_token"],
   data: function data() {
@@ -5343,25 +5391,37 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     login: function login(e) {
-      var url = "http://127.0.0.1:8000/api/login";
-      var params = {
-        method: "POST",
-        body: new URLSearchParams({
-          email: this.email,
-          password: this.password
-        })
-      };
-      fetch(url, params).then(function (res) {
-        return res.json();
-      }).then(function (data) {
-        if (data.token) {
-          document.cookie = "token=".concat(data.token, ";SameSite=Lax");
-        } // continua o fluxo do form enviando os dados
+      var url = "http://127.0.0.1:8000/api/login"; // const params = {
+      //     method: "POST",
+      //     body: new URLSearchParams({
+      //         email: this.email,
+      //         password: this.password,
+      //     }),
+      // };
+      // fetch(url, params)
+      //     .then((res) => res.json())
+      //     .then((data) => {
+      //         if (data.token) {
+      //             document.cookie = `token=${data.token};SameSite=Lax`;
+      //         }
+      //         // continua o fluxo do form enviando os dados
+      //         e.target.submit();
+      //     })
+      //     .catch((e) => console.log(e));
 
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, {
+        email: this.email,
+        password: this.password
+      }).then(function (response) {
+        var token = response.data.token;
+
+        if (token) {
+          document.cookie = "token=".concat(token, ";SameSite=Lax");
+        }
 
         e.target.submit();
-      })["catch"](function (e) {
-        return console.log(e);
+      })["catch"](function (err) {
+        return console.log(err);
       });
     }
   }
@@ -5444,8 +5504,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var render = function render() {
   var _vm = this,
-      _c = _vm._self._c,
-      _setup = _vm._self._setupProxy;
+      _c = _vm._self._c;
 
   return _c("div", {
     staticClass: "container"
@@ -5548,12 +5607,27 @@ var render = function render() {
             helptext: "informe o nome da marca"
           }
         }, [_c("input", {
+          directives: [{
+            name: "model",
+            rawName: "v-model",
+            value: _vm.brandName,
+            expression: "brandName"
+          }],
           staticClass: "form-control",
           attrs: {
             type: "text",
             id: "add-brand-name",
             "aria-describedby": "add-brand-name-help",
             placeholder: "nome da nova marca"
+          },
+          domProps: {
+            value: _vm.brandName
+          },
+          on: {
+            input: function input($event) {
+              if ($event.target.composing) return;
+              _vm.brandName = $event.target.value;
+            }
           }
         })]), _vm._v(" "), _c("input-container-component", {
           attrs: {
@@ -5566,6 +5640,11 @@ var render = function render() {
           attrs: {
             type: "file",
             id: "formFile"
+          },
+          on: {
+            change: function change($event) {
+              return _vm.loadImage($event);
+            }
           }
         })])];
       },
@@ -5583,6 +5662,11 @@ var render = function render() {
           staticClass: "btn btn-primary",
           attrs: {
             type: "button"
+          },
+          on: {
+            click: function click($event) {
+              return _vm.saveData();
+            }
           }
         }, [_vm._v("Salvar")])];
       },
@@ -5667,7 +5751,7 @@ var render = function render() {
     staticClass: "card"
   }, [_c("div", {
     staticClass: "card-header"
-  }, [_vm._v("Login (vue component)")]), _vm._v(" "), _c("div", {
+  }, [_vm._v("Login")]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("form", {
     attrs: {
@@ -28785,9 +28869,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Brands_vue_vue_type_template_id_3106ea3c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Brands.vue?vue&type=template&id=3106ea3c& */ "./resources/js/components/pages/Brands.vue?vue&type=template&id=3106ea3c&");
 /* harmony import */ var _Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Brands.vue?vue&type=script&lang=js& */ "./resources/js/components/pages/Brands.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
-/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== "default") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[__WEBPACK_IMPORT_KEY__]
-/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -29066,11 +29147,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Brands.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/pages/Brands.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
-/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== "default") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__[__WEBPACK_IMPORT_KEY__]
-/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0___default())); 
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Brands_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
