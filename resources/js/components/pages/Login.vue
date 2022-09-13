@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Login (vue component)</div>
+                    <div class="card-header">Login</div>
                     <div class="card-body">
                         <form method="POST" action="" @submit.prevent="login($event)">
                             <input type="hidden" name="_token" :value="csrf_token" />
@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     props: ["csrf_token"],
     data() {
@@ -77,23 +79,35 @@ export default {
     methods: {
         login(e) {
             const url = "http://127.0.0.1:8000/api/login";
-            const params = {
-                method: "POST",
-                body: new URLSearchParams({
-                    email: this.email,
-                    password: this.password,
-                }),
-            };
-            fetch(url, params)
-                .then((res) => res.json())
-                .then((data) => {
-                    if (data.token) {
-                        document.cookie = `token=${data.token};SameSite=Lax`;
+            // const params = {
+            //     method: "POST",
+            //     body: new URLSearchParams({
+            //         email: this.email,
+            //         password: this.password,
+            //     }),
+            // };
+            // fetch(url, params)
+            //     .then((res) => res.json())
+            //     .then((data) => {
+            //         if (data.token) {
+            //             document.cookie = `token=${data.token};SameSite=Lax`;
+            //         }
+            //         // continua o fluxo do form enviando os dados
+            //         e.target.submit();
+            //     })
+            //     .catch((e) => console.log(e));
+            axios.post(url, {
+                email: this.email,
+                password: this.password
+            })
+                .then(response => {
+                    const { token } = response.data;
+                    if (token) {
+                        document.cookie = `token=${token};SameSite=Lax`;
                     }
-                    // continua o fluxo do form enviando os dados
                     e.target.submit();
                 })
-                .catch((e) => console.log(e));
+                .catch(err => console.log(err))
         },
     },
 };
