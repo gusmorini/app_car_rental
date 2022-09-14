@@ -62,16 +62,22 @@
         <!-- modal -->
         <modal-component id="addBrand" title="Adicionar Marca">
             <template v-slot:body>
-                <input-container-component id="add-brand-name" title="nome da marca" helptext="informe o nome da marca">
-                    <input type="text" class="form-control" id="add-brand-name" aria-describedby="add-brand-name-help"
-                        placeholder="nome da nova marca" v-model="brandName" />
-                </input-container-component>
-                <input-container-component id="add-brand-image" title="imagem da marca"
-                    helptext="escolha uma imagem no formato png">
-                    <input class="form-control" type="file" id="formFile" @change="loadImage($event)">
-                </input-container-component>
+                <div class="d-flex flex-column flex-sm-row justify-content-center ">
+                    <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
+                        <img src="https://evidenceencadernacao.com.br/wp-content/themes/claue/assets/images/placeholder.png"
+                            class="img-fluid btn" alt="logo" id="brand-logo" width="100" />
+                        <input class="form-control d-none" type="file" id="brand-image" @change="readImage($event)">
+                    </label>
+                    <input-container-component id="add-brand-name" title="nome da marca"
+                        helptext="informe o nome da marca" class="flex-grow-1">
+                        <input type="text" class="form-control" id="add-brand-name"
+                            aria-describedby="add-brand-name-help" placeholder="nome da nova marca"
+                            v-model="brandName" />
+                    </input-container-component>
+                </div>
+
             </template>
-            <template v-slot:alerts v-if="alert_save.message">
+            <template v-slot:alerts v-if="alert_save.message" class="mt-4">
                 <alerts-component :data="alert_save" />
             </template>
             <template v-slot:footer>
@@ -110,12 +116,24 @@ export default {
     },
     methods: {
         loadImage(e) {
-            this.brandImage = e.target.files
+            const image = e.target.files[0];
+            this.brandImage = image;
+        },
+        readImage({ target }) {
+            if (target.files && target.files[0]) {
+                console.log('rodando')
+                var file = new FileReader();
+                file.onload = function (e) {
+                    document.getElementById("brand-logo").src = e.target.result;
+                };
+                file.readAsDataURL(target.files[0]);
+            }
+            this.brandImage = target.files[0];
         },
         brandSave() {
             let formData = new FormData();
             formData.append('name', this.brandName);
-            formData.append('image', this.brandImage[0]);
+            formData.append('image', this.brandImage);
 
             api.post('/brand', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                 .then(res => {
