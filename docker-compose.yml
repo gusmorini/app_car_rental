@@ -3,14 +3,13 @@ version: "3.7"
 services:
   # image project
   app:
-    container_name: php
+    # container_name: php
     build:
       args:
         user: banana
         uid: 1000
       context: .
       dockerfile: Dockerfile
-    # image: laravel-app
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
@@ -20,7 +19,7 @@ services:
 
   # nginx
   nginx:
-    container_name: nginx
+    # container_name: nginx
     image: nginx:alpine
     restart: unless-stopped
     ports:
@@ -31,7 +30,7 @@ services:
 
   # db mysql
   mysql:
-    container_name: mysql
+    # container_name: mysql
     image: mysql:5.7.22
     restart: unless-stopped
     environment:
