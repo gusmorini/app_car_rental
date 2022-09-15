@@ -200,7 +200,6 @@ export default {
         },
         readImage({ target }) {
             if (target.files && target.files[0]) {
-                console.log("rodando");
                 var file = new FileReader();
                 file.onload = function (e) {
                     document.getElementById("brand-logo").src = e.target.result;
