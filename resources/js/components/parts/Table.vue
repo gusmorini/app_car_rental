@@ -13,6 +13,6 @@
 
 <script>
 export default {
-  props: ['thead'],
-}
+  props: ["thead"],
+};
 </script>

@@ -6,42 +6,23 @@
                     <template v-slot:body>
                         <div class="row">
                             <div class="mb-3 col-sm">
-                                <input-container-component
-                                    id="brand-id"
-                                    title="id da marca"
-                                    helptext="opcional, informe o id da marca"
-                                >
-                                    <input
-                                        type="number"
-                                        class="form-control"
-                                        id="brand-id"
-                                        aria-describedby="brand-id-help"
-                                        placeholder="id da marca"
-                                    />
+                                <input-container-component id="brand-id" title="id da marca"
+                                    helptext="opcional, informe o id da marca">
+                                    <input type="number" class="form-control" id="brand-id"
+                                        aria-describedby="brand-id-help" placeholder="id da marca" />
                                 </input-container-component>
                             </div>
                             <div class="mb-3 col-sm">
-                                <input-container-component
-                                    id="brand-name"
-                                    title="nome da marca"
-                                    helptext="opcional, informe o nome da marca"
-                                >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="brand-name"
-                                        aria-describedby="brand-name-help"
-                                        placeholder="nome da marca"
-                                    />
+                                <input-container-component id="brand-name" title="nome da marca"
+                                    helptext="opcional, informe o nome da marca">
+                                    <input type="text" class="form-control" id="brand-name"
+                                        aria-describedby="brand-name-help" placeholder="nome da marca" />
                                 </input-container-component>
                             </div>
                         </div>
                     </template>
                     <template v-slot:footer>
-                        <button
-                            type="submit"
-                            class="btn btn-primary btn-sm float-end"
-                        >
+                        <button type="submit" class="btn btn-primary btn-sm float-end">
                             Pesquisar
                         </button>
                     </template>
@@ -51,7 +32,13 @@
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
                         <template v-if="brands.length > 0">
-                            <table-component :thead="['#', 'name', 'image']">
+                            <table-component :thead="[
+                                '#',
+                                'name',
+                                'image',
+                                'criado',
+                                'ações',
+                            ]">
                                 <template>
                                     <tr v-for="key in brands">
                                         <th scope="row">{{ key.id }}</th>
@@ -59,21 +46,18 @@
                                             {{ key.name }}
                                         </td>
                                         <td>
-                                            <img
-                                                :src="'/storage/' + key.image"
-                                                width="30"
-                                            />
+                                            <img :src="'/storage/' + key.image" width="30" />
+                                        </td>
+                                        <td>
+                                            {{
+                                            new Date(
+                                            key.created_at
+                                            ).toLocaleDateString("pt-BR")
+                                            }}
                                         </td>
                                         <td width="140">
-                                            <a
-                                                class="btn btn-sm btn-light"
-                                                href="#"
-                                                >editar</a
-                                            >
-                                            <button
-                                                class="btn btn-sm btn-light"
-                                                @click="brandDestroy(key.id)"
-                                            >
+                                            <a class="btn btn-sm btn-light" href="#">editar</a>
+                                            <button class="btn btn-sm btn-light" @click="brandDestroy(key.id)">
                                                 deletar
                                             </button>
                                         </td>
@@ -85,18 +69,11 @@
                             <div>nenhum registro encontrado</div>
                         </template>
 
-                        <alerts-component
-                            :data="alert_destroy"
-                            v-if="alert_destroy.message"
-                        />
+                        <alerts-component :data="alert_destroy" v-if="alert_destroy.message" />
                     </template>
                     <template v-slot:footer>
-                        <button
-                            type="submit"
-                            class="btn btn-primary btn-sm float-end"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addBrand"
-                        >
+                        <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
+                            data-bs-target="#addBrand">
                             Adicionar
                         </button>
                     </template>
@@ -106,41 +83,17 @@
         <!-- modal -->
         <modal-component id="addBrand" title="Adicionar Marca">
             <template v-slot:body>
-                <div
-                    class="d-flex flex-column flex-sm-row justify-content-center"
-                >
-                    <label
-                        for="brand-image"
-                        class="align-items-center align-self-center p-2 border rounded me-4"
-                    >
-                        <img
-                            src="https://evidenceencadernacao.com.br/wp-content/themes/claue/assets/images/placeholder.png"
-                            class="img-fluid btn"
-                            alt="logo"
-                            id="brand-logo"
-                            width="100"
-                        />
-                        <input
-                            class="form-control d-none"
-                            type="file"
-                            id="brand-image"
-                            @change="readImage($event)"
-                        />
+                <div class="d-flex flex-column flex-sm-row justify-content-center">
+                    <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
+                        <img src="https://evidenceencadernacao.com.br/wp-content/themes/claue/assets/images/placeholder.png"
+                            class="img-fluid btn" alt="logo" id="brand-logo" width="100" />
+                        <input class="form-control d-none" type="file" id="brand-image" @change="readImage($event)" />
                     </label>
-                    <input-container-component
-                        id="add-brand-name"
-                        title="nome da marca"
-                        helptext="informe o nome da marca"
-                        class="flex-grow-1"
-                    >
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="add-brand-name"
-                            aria-describedby="add-brand-name-help"
-                            placeholder="nome da nova marca"
-                            v-model="brandName"
-                        />
+                    <input-container-component id="add-brand-name" title="nome da marca"
+                        helptext="informe o nome da marca" class="flex-grow-1">
+                        <input type="text" class="form-control" id="add-brand-name"
+                            aria-describedby="add-brand-name-help" placeholder="nome da nova marca"
+                            v-model="brandName" />
                     </input-container-component>
                 </div>
             </template>
@@ -148,18 +101,10 @@
                 <alerts-component :data="alert_save" />
             </template>
             <template v-slot:footer>
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Fechar
                 </button>
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="brandSave()"
-                >
+                <button type="button" class="btn btn-primary" @click="brandSave()">
                     Salvar
                 </button>
             </template>
