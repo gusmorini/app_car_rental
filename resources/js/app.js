@@ -57,6 +57,10 @@ Vue.component(
     "alerts-component",
     require("./components/parts/Alert.vue").default
 );
+Vue.component(
+    "paginate-component",
+    require("./components/parts/Paginate.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

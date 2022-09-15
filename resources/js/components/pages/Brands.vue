@@ -31,7 +31,7 @@
                 <!-- table -->
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
-                        <template v-if="brands.length > 0">
+                        <template v-if="brands.data.length > 0">
                             <table-component :thead="[
                                 '#',
                                 'name',
@@ -40,7 +40,7 @@
                                 'ações',
                             ]">
                                 <template>
-                                    <tr v-for="key in brands">
+                                    <tr v-for="key in brands.data">
                                         <th scope="row">{{ key.id }}</th>
                                         <td class="text-uppercase">
                                             {{ key.name }}
@@ -72,10 +72,24 @@
                         <alerts-component :data="alert_destroy" v-if="alert_destroy.message" />
                     </template>
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
-                            data-bs-target="#addBrand">
-                            Adicionar
-                        </button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <paginate-component>
+                                <li :class="!!l.active ? 'page-item active' : 'page-itemx'"
+                                    v-for="l, key in brands.links" @click="paginate(l)">
+                                    <a class="page-link">
+                                        {{ l.label.includes('prev') ? 'voltar' :
+                                        l.label.includes('next') ? 'próximo' :
+                                        l.label
+                                        }}</a>
+                                </li>
+                            </paginate-component>
+                            <div>
+                                <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
+                                    data-bs-target="#addBrand">
+                                    Adicionar
+                                </button>
+                            </div>
+                        </div>
                     </template>
                 </card-component>
             </div>
@@ -120,7 +134,9 @@ export default {
         return {
             brandName: "",
             brandImage: [],
-            brands: [],
+            brands: {
+                data: [],
+            },
             type: null,
             text: "",
             alert_destroy: {
@@ -133,11 +149,7 @@ export default {
             },
         };
     },
-    mounted() {
-        api.get("/brand")
-            .then(({ data }) => (this.brands = data))
-            .catch((e) => console.log(e));
-    },
+
     methods: {
         loadImage(e) {
             const image = e.target.files[0];
@@ -153,6 +165,17 @@ export default {
             }
             this.brandImage = target.files[0];
         },
+        getBrands($page = 1) {
+            api.get(`/brand?page=${$page}`)
+                .then(({ data }) => this.brands = data)
+                .catch((e) => console.log(e));
+        },
+        paginate(item) {
+            if (item.url) {
+                const page = item.url.split('?')[1].split('=')[1];
+                this.getBrands(page);
+            }
+        },
         brandSave() {
             let formData = new FormData();
             formData.append("name", this.brandName);
@@ -164,9 +187,9 @@ export default {
                 .then((res) => {
                     this.alert_save = {
                         type: "success",
-                        message: "a marca foi registrada",
+                        message: `novo registro inserido ID: ${res.data.id}`,
                     };
-                    this.brands.push(res.data);
+                    // this.brands.push(res.data);
                 })
                 .catch((e) => {
                     this.alert_save = {
@@ -195,6 +218,10 @@ export default {
                     console.log(e.response);
                 });
         },
+
+    },
+    mounted() {
+        this.getBrands();
     },
 };
 </script>

@@ -30,6 +30,10 @@
       return $this->model->get();
     }
 
+    public function getWithPaginate($qtdPage) {
+      return $this->model->paginate($qtdPage);
+    }
+
     public function getById($id) {
       $this->model = $this->model->find($id);
     }

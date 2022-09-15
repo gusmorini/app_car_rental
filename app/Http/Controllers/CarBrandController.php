@@ -35,7 +35,7 @@ class CarBrandController extends Controller
         if($request->has('search')) {
             $brandRepository->selectSearchAttributes($request->search);
         }
-        return response()->json($brandRepository->get(), 200);
+        return response()->json($brandRepository->getWithPaginate(3), 200);
     }
 
     /**
