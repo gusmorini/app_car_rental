@@ -48,20 +48,16 @@
                                             {{ key.name }}
                                         </td>
                                         <td>
-                                            <img :src="'/storage/' + key.image" width="30" />
+                                            <img :src="'/storage/' + key.image" width="25" />
                                         </td>
                                         <td>
-                                            {{
-                                            new Date(
-                                            key.created_at
-                                            ).toLocaleDateString("pt-BR")
-                                            }}
+                                            {{ new Date(key.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
-                                        <td width="140">
-                                            <a class="btn btn-sm btn-light" href="#">editar</a>
-                                            <button class="btn btn-sm btn-light" @click="brandDestroy(key.id)">
-                                                deletar
-                                            </button>
+                                        <td>
+                                            <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"><i
+                                                    class="bi bi-eye"></i></a>
+                                            <a href="#"><i class="bi bi-pencil"></i></a>
+                                            <a @click="brandDestroy(key.id)" href="#"><i class="bi bi-trash"></i></a>
                                         </td>
                                     </tr>
                                 </template>
@@ -87,7 +83,7 @@
                             </paginate-component>
                             <div>
                                 <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
-                                    data-bs-target="#addBrand">
+                                    data-bs-target="#brand-add">
                                     Adicionar
                                 </button>
                             </div>
@@ -96,8 +92,8 @@
                 </card-component>
             </div>
         </div>
-        <!-- modal -->
-        <modal-component id="addBrand" title="Adicionar Marca">
+        <!-- modal adicionar -->
+        <modal-component id="brand-add" title="Adicionar Marca">
             <template v-slot:body>
                 <div class="d-flex flex-column flex-sm-row justify-content-center">
                     <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
@@ -122,6 +118,22 @@
                 </button>
                 <button type="button" class="btn btn-primary" @click="brandSave()">
                     Salvar
+                </button>
+            </template>
+        </modal-component>
+        <!-- modal visualizar -->
+        <modal-component id="brand-show" title="Visualizar Marca">
+            <template v-slot:body>
+                <div class="d-flex flex-column flex-sm-row justify-content-center">
+                    teste
+                </div>
+            </template>
+            <!-- <template v-slot:alerts v-if="alert_save.message" class="mt-4">
+                <alerts-component :data="alert_save" />
+            </template> -->
+            <template v-slot:footer>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Fechar
                 </button>
             </template>
         </modal-component>
