@@ -9,20 +9,22 @@
                                 <input-container-component id="brand-id" title="id da marca"
                                     helptext="opcional, informe o id da marca">
                                     <input type="number" class="form-control" id="brand-id"
-                                        aria-describedby="brand-id-help" placeholder="id da marca" />
+                                        aria-describedby="brand-id-help" placeholder="id da marca"
+                                        v-model="search.id" />
                                 </input-container-component>
                             </div>
                             <div class="mb-3 col-sm">
                                 <input-container-component id="brand-name" title="nome da marca"
                                     helptext="opcional, informe o nome da marca">
                                     <input type="text" class="form-control" id="brand-name"
-                                        aria-describedby="brand-name-help" placeholder="nome da marca" />
+                                        aria-describedby="brand-name-help" placeholder="nome da marca"
+                                        v-model="search.name" />
                                 </input-container-component>
                             </div>
                         </div>
                     </template>
                     <template v-slot:footer>
-                        <button type="submit" class="btn btn-primary btn-sm float-end">
+                        <button type="submit" class="btn btn-primary btn-sm float-end" @click="findBrand()">
                             Pesquisar
                         </button>
                     </template>
@@ -137,6 +139,10 @@ export default {
             brands: {
                 data: [],
             },
+            search: {
+                id: '',
+                name: '',
+            },
             type: null,
             text: "",
             alert_destroy: {
@@ -165,8 +171,23 @@ export default {
             }
             this.brandImage = target.files[0];
         },
-        getBrands($page = 1) {
-            api.get(`/brand?page=${$page}`)
+        findBrand() {
+            const s = this.search;
+            let params = '';
+            for (let key in s) {
+                if (s[key]) {
+                    if (params !== '') params += ';';
+                    params += `${key},LIKE,${s[key]}%`;
+                }
+            }
+
+            params ? this.getBrands(null, params) : this.getBrands();
+
+        },
+        getBrands(page = 1, search = '') {
+            let url = `/brand?page=${page ? page : 1}`;
+            search ? url += `&search=${search}` : false;
+            api.get(url)
                 .then(({ data }) => this.brands = data)
                 .catch((e) => console.log(e));
         },
