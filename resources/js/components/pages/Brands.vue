@@ -54,8 +54,10 @@
                                             {{ new Date(key.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
                                         <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"><i
-                                                    class="bi bi-eye"></i></a>
+                                            <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"
+                                                @click="brandShow(key)">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                             <a href="#"><i class="bi bi-pencil"></i></a>
                                             <a @click="brandDestroy(key.id)" href="#"><i class="bi bi-trash"></i></a>
                                         </td>
@@ -123,9 +125,40 @@
         </modal-component>
         <!-- modal visualizar -->
         <modal-component id="brand-show" title="Visualizar Marca">
-            <template v-slot:body>
-                <div class="d-flex flex-column flex-sm-row justify-content-center">
-                    teste
+            <template v-slot:body v-if="brand_show">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <img :src="'storage/'+brand_show.image" class="img-fluid" :alt="brand_show.name">
+                    <h1 class="text-uppercase">{{ brand_show.name }}</h1>
+                </div>
+                <div v-if="brand_show.car_models.length > 0">
+                    <hr />
+                    <table-component :thead="[
+                        '#',
+                        'modelo',
+                        'lugares',
+                        'portas',
+                        'ações',
+                    ]">
+                        <template>
+                            <tr v-for="key in brand_show.car_models">
+                                <th scope="row">{{ key.id }}</th>
+                                <td class="text-uppercase">
+                                    {{ key.name }}
+                                </td>
+                                <td>
+                                    {{ key.places }}
+                                </td>
+                                <td>
+                                    {{ key.number_doors }}
+                                </td>
+                                <td>
+                                    <a href="#">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </template>
+                    </table-component>
                 </div>
             </template>
             <!-- <template v-slot:alerts v-if="alert_save.message" class="mt-4">
@@ -165,6 +198,7 @@ export default {
                 type: null,
                 message: "",
             },
+            brand_show: null,
         };
     },
 
@@ -208,6 +242,9 @@ export default {
                 const page = item.url.split('?')[1].split('=')[1];
                 this.getBrands(page);
             }
+        },
+        brandShow(e) {
+            this.brand_show = e;
         },
         brandSave() {
             let formData = new FormData();
