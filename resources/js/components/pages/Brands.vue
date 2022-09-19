@@ -54,12 +54,17 @@
                                             {{ new Date(brand.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
                                         <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"
+                                            <!-- <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"
                                                 @click="brandShow(index)">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             <a href="#" @click="brandUpdate(brand)"><i class="bi bi-pencil"></i></a>
-                                            <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i></a>
+                                            <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i></a> -->
+                                            <a @click="setItem(brand)" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#brand-modal"><i class="bi bi-eye"></i>
+                                                visualizar </a>
+                                            <!-- <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i>
+                                                remover</a> -->
                                         </td>
                                     </tr>
                                 </template>
@@ -85,7 +90,7 @@
                             </paginate-component>
                             <div>
                                 <button type="submit" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
-                                    data-bs-target="#brand-add">
+                                    data-bs-target="#brand-modal" @click="setItem(null)">
                                     Adicionar
                                 </button>
                             </div>
@@ -95,19 +100,20 @@
             </div>
         </div>
         <!-- modal adicionar -->
-        <modal-component id="brand-add" title="Adicionar Marca">
+        <modal-component id="brand-modal" :title="selected.title">
             <template v-slot:body>
                 <div class="d-flex flex-column justify-content-center">
                     <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
-                        <img src="https://evidenceencadernacao.com.br/wp-content/themes/claue/assets/images/placeholder.png"
+                        <img :src="selected.image ? 'storage/'+selected.image : '/storage/image.png'"
                             class="img-fluid btn" alt="logo" id="brand-logo" width="100" />
-                        <input class="form-control d-none" type="file" id="brand-image" @change="readImage($event)" />
+                        <input class="form-control d-none" type="file" id="brand-image" @change="readImage($event)"
+                            :disabled="!selected.edit" />
                     </label>
                     <input-container-component id="add-brand-name" title="nome da marca"
                         helptext="informe o nome da marca" class="flex-grow-1">
                         <input type="text" class="form-control" id="add-brand-name"
                             aria-describedby="add-brand-name-help" placeholder="nome da nova marca"
-                            v-model="brandName" />
+                            v-model="selected.name" :disabled="!selected.edit" />
                     </input-container-component>
                 </div>
             </template>
@@ -118,57 +124,18 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Fechar
                 </button>
-                <button type="button" class="btn btn-primary" @click="brandSave()">
-                    Salvar
+                <button type="button" class="btn btn-primary" v-if="!selected.edit" @click="selected.edit = true">
+                    editar
                 </button>
-            </template>
-        </modal-component>
-        <!-- modal visualizar -->
-        <modal-component id="brand-show" title="Visualizar Marca">
-            <template v-slot:body v-if="brand_show">
-                {{ brand_show }}
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <img :src="'storage/'+brand_show.image" class="img-fluid" :alt="brand_show.name">
-                    <h1 class="text-uppercase">{{ brand_show.name }}</h1>
-                </div>
-                <div v-if="brand_show.car_models.length > 0">
-                    <hr />
-                    <table-component :thead="[
-                        '#',
-                        'modelo',
-                        'lugares',
-                        'portas',
-                        'ações',
-                    ]">
-                        <template>
-                            <tr v-for="key in brand_show.car_models">
-                                <th scope="row">{{ key.id }}</th>
-                                <td class="text-uppercase">
-                                    {{ key.name }}
-                                </td>
-                                <td>
-                                    {{ key.places }}
-                                </td>
-                                <td>
-                                    {{ key.number_doors }}
-                                </td>
-                                <td>
-                                    <a href="#">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </template>
-                    </table-component>
-                </div>
-            </template>
-            <!-- <template v-slot:alerts v-if="alert_save.message" class="mt-4">
-                <alerts-component :data="alert_save" />
-            </template> -->
-            <template v-slot:footer>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Fechar
-                </button>
+                <template v-else>
+                    <button v-if="selected.id" type="button" class="btn btn-danger" @click="brandDestroy(selected.id)">
+                        apagar
+                    </button>
+                    <button type="button" class="btn btn-success" @click="brandSave()">
+                        {{ selected.id ? 'atualizar' : 'salvar' }}
+                    </button>
+                </template>
+
             </template>
         </modal-component>
     </div>
@@ -180,16 +147,13 @@ import api from "../../../../services/api";
 export default {
     data() {
         return {
-            brandName: "",
-            brandImage: [],
             brands: [],
             links: [],
+            page: 1,
             search: {
                 id: '',
                 name: '',
             },
-            type: null,
-            text: "",
             alert_destroy: {
                 type: null,
                 message: "",
@@ -198,14 +162,15 @@ export default {
                 type: null,
                 message: "",
             },
-            brand_show: null,
-            brand_update: null,
+            selected: {},
         };
     },
     methods: {
-        loadImage(e) {
-            const image = e.target.files[0];
-            this.brandImage = image;
+        setItem(item) {
+            if (!item) return this.selected = { name: '', image: '', title: 'adicionar marca', edit: true }
+            item.title = 'visualizar marca';
+            item.edit = false;
+            this.selected = { ...this.selected, ...item };
         },
         readImage({ target }) {
             if (target.files && target.files[0]) {
@@ -215,7 +180,7 @@ export default {
                 };
                 file.readAsDataURL(target.files[0]);
             }
-            this.brandImage = target.files[0];
+            this.selected.image = target.files[0];
         },
         findBrand() {
             const s = this.search;
@@ -226,17 +191,16 @@ export default {
                     params += `${key},LIKE,${s[key]}%`;
                 }
             }
-
             params ? this.getBrands(null, params) : this.getBrands();
-
         },
-        getBrands(page = 1, search = '') {
+        getBrands(page = this.page, search = '') {
             let url = `/brand?page=${page ? page : 1}`;
             search ? url += `&search=${search}` : false;
             api.get(url)
                 .then(({ data }) => {
                     this.brands = data.data;
                     this.links = data.links;
+                    this.page = page;
                 })
                 .catch((e) => console.log(e));
         },
@@ -246,21 +210,22 @@ export default {
                 this.getBrands(page);
             }
         },
-        brandShow(index) {
-            // this.brand_show = e;
-            // console.log(this.brand_show);
-            // this.$store.state.item_selected = e;
-            this.brand_show = this.brands[index];
-        },
-        brandUpdate(e) {
-            console.log(e)
-        },
         brandSave() {
+            const data = this.selected;
+            let url = '/brand';
             let formData = new FormData();
-            formData.append("name", this.brandName);
-            formData.append("image", this.brandImage);
 
-            api.post("/brand", formData, {
+            formData.append("name", data.name);
+            formData.append("image", data.image);
+
+            if (data.id) {
+                url += '/' + data.id;
+                formData.append("_method", "patch");
+            }
+
+            console.log(url, formData)
+
+            api.post(url, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then((res) => {
@@ -268,9 +233,7 @@ export default {
                         type: "success",
                         message: `novo registro inserido ID: ${res.data.id}`,
                     };
-                    // this.brands.push(res.data);
-                    this.brands = [...this.brands, res.data];
-                    // this.getBrands();
+                    this.getBrands()
                 })
                 .catch((e) => {
                     this.alert_save = {
@@ -289,8 +252,7 @@ export default {
                         type: "success",
                         message: "item foi deletado",
                     };
-                    this.brands = this.brands.filter((e) => e.id != id);
-                    // this.getBrands();
+                    this.getBrands();
                 })
                 .catch((e) => {
                     this.alert_destroy = {
@@ -303,7 +265,12 @@ export default {
 
     },
     mounted() {
+        // recupera lista de marcas
         this.getBrands();
+        // reinicia valores ao fechar o modal
+        document.querySelector('#brand-modal').addEventListener('hide.bs.modal', function () {
+            this.selected = {};
+        })
     },
 };
 </script>
