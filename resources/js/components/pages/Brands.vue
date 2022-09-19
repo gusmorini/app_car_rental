@@ -33,7 +33,7 @@
                 <!-- table -->
                 <card-component title="Relação das marcas">
                     <template v-slot:body>
-                        <template v-if="brands.data.length > 0">
+                        <template v-if="brands.length > 0">
                             <table-component :thead="[
                                 '#',
                                 'name',
@@ -42,24 +42,24 @@
                                 'ações',
                             ]">
                                 <template>
-                                    <tr v-for="key in brands.data">
-                                        <th scope="row">{{ key.id }}</th>
+                                    <tr v-for="brand, index in brands">
+                                        <th scope="row">{{ brand.id }}</th>
                                         <td class="text-uppercase">
-                                            {{ key.name }}
+                                            {{ brand.name }}
                                         </td>
                                         <td>
-                                            <img :src="'/storage/' + key.image" width="25" />
+                                            <img :src="'/storage/' + brand.image" width="25" />
                                         </td>
                                         <td>
-                                            {{ new Date(key.created_at).toLocaleDateString("pt-BR") }}
+                                            {{ new Date(brand.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
                                         <td>
                                             <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"
-                                                @click="brandShow(key)">
+                                                @click="brandShow(index)">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="#"><i class="bi bi-pencil"></i></a>
-                                            <a @click="brandDestroy(key.id)" href="#"><i class="bi bi-trash"></i></a>
+                                            <a href="#" @click="brandUpdate(brand)"><i class="bi bi-pencil"></i></a>
+                                            <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i></a>
                                         </td>
                                     </tr>
                                 </template>
@@ -74,8 +74,8 @@
                     <template v-slot:footer>
                         <div class="d-flex justify-content-between align-items-center">
                             <paginate-component>
-                                <li :class="!!l.active ? 'page-item active' : 'page-itemx'"
-                                    v-for="l, key in brands.links" @click="paginate(l)">
+                                <li :class="!!l.active ? 'page-item active' : 'page-itemx'" v-for="l, key in links"
+                                    @click="paginate(l)">
                                     <a class="page-link">
                                         {{ l.label.includes('prev') ? 'voltar' :
                                         l.label.includes('next') ? 'próximo' :
@@ -97,7 +97,7 @@
         <!-- modal adicionar -->
         <modal-component id="brand-add" title="Adicionar Marca">
             <template v-slot:body>
-                <div class="d-flex flex-column flex-sm-row justify-content-center">
+                <div class="d-flex flex-column justify-content-center">
                     <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
                         <img src="https://evidenceencadernacao.com.br/wp-content/themes/claue/assets/images/placeholder.png"
                             class="img-fluid btn" alt="logo" id="brand-logo" width="100" />
@@ -126,6 +126,7 @@
         <!-- modal visualizar -->
         <modal-component id="brand-show" title="Visualizar Marca">
             <template v-slot:body v-if="brand_show">
+                {{ brand_show }}
                 <div class="d-flex flex-column justify-content-center align-items-center">
                     <img :src="'storage/'+brand_show.image" class="img-fluid" :alt="brand_show.name">
                     <h1 class="text-uppercase">{{ brand_show.name }}</h1>
@@ -181,9 +182,8 @@ export default {
         return {
             brandName: "",
             brandImage: [],
-            brands: {
-                data: [],
-            },
+            brands: [],
+            links: [],
             search: {
                 id: '',
                 name: '',
@@ -199,9 +199,9 @@ export default {
                 message: "",
             },
             brand_show: null,
+            brand_update: null,
         };
     },
-
     methods: {
         loadImage(e) {
             const image = e.target.files[0];
@@ -234,7 +234,10 @@ export default {
             let url = `/brand?page=${page ? page : 1}`;
             search ? url += `&search=${search}` : false;
             api.get(url)
-                .then(({ data }) => this.brands = data)
+                .then(({ data }) => {
+                    this.brands = data.data;
+                    this.links = data.links;
+                })
                 .catch((e) => console.log(e));
         },
         paginate(item) {
@@ -243,8 +246,14 @@ export default {
                 this.getBrands(page);
             }
         },
-        brandShow(e) {
-            this.brand_show = e;
+        brandShow(index) {
+            // this.brand_show = e;
+            // console.log(this.brand_show);
+            // this.$store.state.item_selected = e;
+            this.brand_show = this.brands[index];
+        },
+        brandUpdate(e) {
+            console.log(e)
         },
         brandSave() {
             let formData = new FormData();
@@ -260,6 +269,8 @@ export default {
                         message: `novo registro inserido ID: ${res.data.id}`,
                     };
                     // this.brands.push(res.data);
+                    this.brands = [...this.brands, res.data];
+                    // this.getBrands();
                 })
                 .catch((e) => {
                     this.alert_save = {
@@ -279,6 +290,7 @@ export default {
                         message: "item foi deletado",
                     };
                     this.brands = this.brands.filter((e) => e.id != id);
+                    // this.getBrands();
                 })
                 .catch((e) => {
                     this.alert_destroy = {
