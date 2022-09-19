@@ -5,9 +5,9 @@ services:
   app:
     # container_name: php
     build:
-      args:
-        user: banana
-        uid: 1000
+      # args:
+      #   user: banana
+      #   uid: 1000
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
