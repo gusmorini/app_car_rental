@@ -54,17 +54,10 @@
                                             {{ new Date(brand.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
                                         <td>
-                                            <!-- <a data-bs-toggle="modal" data-bs-target="#brand-show" href="#"
-                                                @click="brandShow(index)">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a href="#" @click="brandUpdate(brand)"><i class="bi bi-pencil"></i></a>
-                                            <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i></a> -->
                                             <a @click="setItem(brand)" href="#" data-bs-toggle="modal"
                                                 data-bs-target="#brand-modal"><i class="bi bi-eye"></i>
-                                                visualizar </a>
-                                            <!-- <a @click="brandDestroy(brand.id)" href="#"><i class="bi bi-trash"></i>
-                                                remover</a> -->
+                                                visualizar
+                                            </a>
                                         </td>
                                     </tr>
                                 </template>
@@ -74,7 +67,6 @@
                             <div>nenhum registro encontrado</div>
                         </template>
 
-                        <alerts-component :data="alert_destroy" v-if="alert_destroy.message" />
                     </template>
                     <template v-slot:footer>
                         <div class="d-flex justify-content-between align-items-center">
@@ -117,9 +109,11 @@
                     </input-container-component>
                 </div>
             </template>
-            <template v-slot:alerts v-if="alert_save.message" class="mt-4">
-                <alerts-component :data="alert_save" />
+
+            <template v-slot:alerts class="mt-4" v-if="alert.type">
+                <alerts-component :data="alert" />
             </template>
+
             <template v-slot:footer>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Fechar
@@ -135,9 +129,10 @@
                         {{ selected.id ? 'atualizar' : 'salvar' }}
                     </button>
                 </template>
-
             </template>
+
         </modal-component>
+
     </div>
 </template>
 
@@ -154,23 +149,22 @@ export default {
                 id: '',
                 name: '',
             },
-            alert_destroy: {
-                type: null,
-                message: "",
-            },
-            alert_save: {
-                type: null,
-                message: "",
-            },
-            selected: {},
         };
+    },
+    computed: {
+        selected() {
+            return this.$store.state.selected;
+        },
+        alert() {
+            return this.$store.state.alert;
+        }
     },
     methods: {
         setItem(item) {
-            if (!item) return this.selected = { name: '', image: '', title: 'adicionar marca', edit: true }
+            if (!item) return this.$store.state.selected = { name: '', image: '', title: 'adicionar marca', edit: true }
             item.title = 'visualizar marca';
             item.edit = false;
-            this.selected = { ...this.selected, ...item };
+            this.$store.state.selected = { ...this.$store.state.selected, ...item };
         },
         readImage({ target }) {
             if (target.files && target.files[0]) {
@@ -180,7 +174,7 @@ export default {
                 };
                 file.readAsDataURL(target.files[0]);
             }
-            this.selected.image = target.files[0];
+            this.$store.state.selected.image = target.files[0];
         },
         findBrand() {
             const s = this.search;
@@ -223,8 +217,6 @@ export default {
                 formData.append("_method", "patch");
             }
 
-            console.log(url, formData)
-
             api.post(url, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
@@ -248,17 +240,17 @@ export default {
 
             api.delete(`/brand/${id}`)
                 .then((res) => {
-                    this.alert_destroy = {
-                        type: "success",
-                        message: "item foi deletado",
-                    };
+                    this.$store.state.alert = {
+                        type: 'success',
+                        message: 'item foi deletado'
+                    }
                     this.getBrands();
                 })
                 .catch((e) => {
-                    this.alert_destroy = {
-                        type: "danger",
-                        message: "erro ao deletar registro",
-                    };
+                    this.$store.state.alert = {
+                        type: 'danger',
+                        message: 'erro ao deletar registro'
+                    }
                     console.log(e.response);
                 });
         },
@@ -267,10 +259,6 @@ export default {
     mounted() {
         // recupera lista de marcas
         this.getBrands();
-        // reinicia valores ao fechar o modal
-        document.querySelector('#brand-modal').addEventListener('hide.bs.modal', function () {
-            this.selected = {};
-        })
     },
 };
 </script>

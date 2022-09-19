@@ -9,8 +9,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <slot name="alerts"></slot>
                     <slot name="body"></slot>
+                    <slot name="alerts"></slot>
                 </div>
                 <div class="modal-footer">
                     <slot name="footer"></slot>
@@ -23,5 +23,15 @@
 <script>
 export default {
     props: ["id", "title"],
+    methods: {
+        resetSelected() {
+            this.$store.state.selected = {};
+            this.$store.state.alert = {};
+        }
+    },
+    mounted() {
+        document.getElementById(this.id).addEventListener('hide.bs.modal', this.resetSelected);
+    }
+
 };
 </script>

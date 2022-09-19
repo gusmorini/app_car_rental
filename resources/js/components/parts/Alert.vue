@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  props: ['type', 'text', 'data'],
+  props: ['type', 'data'],
   computed: {
     classAlert() {
       return `alert alert-${this.data.type ? this.data.type : 'primary'}`;
