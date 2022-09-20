@@ -30,6 +30,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <div class="position-fixed top-0 end-0 mt-5 p-3" id="toast-container" style="z-index: 2000"></div>
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">

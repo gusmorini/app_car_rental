@@ -138,6 +138,7 @@
 
 <script>
 import api from "../../../../services/api";
+import { Modal } from 'bootstrap';
 
 export default {
     data() {
@@ -157,7 +158,10 @@ export default {
         },
         alert() {
             return this.$store.state.alert;
-        }
+        },
+        toast() {
+            return this.$store.state.toast;
+        },
     },
     methods: {
         setItem(item) {
@@ -221,17 +225,19 @@ export default {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then((res) => {
-                    this.alert_save = {
-                        type: "success",
-                        message: `novo registro inserido ID: ${res.data.id}`,
-                    };
+                    // this.alert_save = {
+                    //     type: "success",
+                    //     message: `novo registro inserido ID: ${res.data.id}`,
+                    // };
+                    this.modal.hide();
+                    this.toast({ title: 'sucesso', message: `novo registro ID ${res.data.id} inserido` })
                     this.getBrands()
                 })
                 .catch((e) => {
-                    this.alert_save = {
-                        type: "danger",
-                        message: e.response.data.errors,
-                    };
+                    // this.alert_save = {
+                    //     type: "danger",
+                    //     message: e.response.data.errors,
+                    // };
                     console.log(e.response.data.errors);
                 });
         },
@@ -240,10 +246,11 @@ export default {
 
             api.delete(`/brand/${id}`)
                 .then((res) => {
-                    this.$store.state.alert = {
-                        type: 'success',
-                        message: 'item foi deletado'
-                    }
+                    // this.$store.state.alert = {
+                    //     type: 'success',
+                    //     message: 'item foi deletado'
+                    // }
+                    this.toast({ title: 'sucesso', message: 'o item foi deletado' })
                     this.getBrands();
                 })
                 .catch((e) => {
