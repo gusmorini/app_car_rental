@@ -13,7 +13,9 @@
                     <slot name="alerts"></slot>
                 </div>
                 <div class="modal-footer">
-                    <slot name="footer"></slot>
+                    <div class="col-12 text-end">
+                        <slot name="footer"></slot>
+                    </div>
                 </div>
             </div>
         </div>
