@@ -39,7 +39,7 @@
                                 'name',
                                 'image',
                                 'criado',
-                                'ações',
+                                ' ',
                             ]">
                                 <template>
                                     <tr v-for="brand, index in brands">
@@ -53,9 +53,10 @@
                                         <td>
                                             {{ new Date(brand.created_at).toLocaleDateString("pt-BR") }}
                                         </td>
-                                        <td>
-                                            <a @click="setItem(brand)" href="#" data-bs-toggle="modal"
-                                                data-bs-target="#brand-modal"><i class="bi bi-eye"></i>
+                                        <td width="120">
+                                            <a class="btn btn-sm btn-light" @click="setItem(brand)" href="#"
+                                                data-bs-toggle="modal" data-bs-target="#brand-modal"><i
+                                                    class="bi bi-eye"></i>
                                                 visualizar
                                             </a>
                                         </td>
@@ -95,17 +96,21 @@
         <modal-component id="brand-modal" :title="selected.title">
             <template v-slot:body>
                 <div class="d-flex flex-column justify-content-center">
-                    <label for="brand-image" class="align-items-center align-self-center p-2 border rounded me-4">
-                        <img :src="selected.image ? 'storage/'+selected.image : '/storage/image.png'"
-                            class="img-fluid btn" alt="logo" id="brand-logo" width="100" />
-                        <input class="form-control d-none" type="file" id="brand-image" @change="readImage($event)"
-                            :disabled="!selected.edit" />
-                    </label>
+                    <div class="align-items-center align-self-center p-2 border rounded">
+                        <img :src="selected.image ? 'storage/'+selected.image : '/storage/image.png'" class="img-fluid"
+                            alt="logo" id="brand-logo" width="120" />
+                    </div>
+
                     <input-container-component id="add-brand-name" title="nome da marca"
                         helptext="informe o nome da marca" class="flex-grow-1">
                         <input type="text" class="form-control" id="add-brand-name"
                             aria-describedby="add-brand-name-help" placeholder="nome da nova marca"
                             v-model="selected.name" :disabled="!selected.edit" />
+                    </input-container-component>
+                    <input-container-component id="add-brand-image" title="logo da marca"
+                        helptext="informe o logo da marca" class="flex-grow-1">
+                        <input class="form-control" type="file" id="brand-image" @change="readImage($event)"
+                            :disabled="!selected.edit" />
                     </input-container-component>
                 </div>
             </template>
@@ -178,7 +183,7 @@ export default {
                 };
                 file.readAsDataURL(target.files[0]);
             }
-            this.$store.state.selected.image = target.files[0];
+            this.$store.state.selected.image_file = target.files[0];
         },
         findBrand() {
             const s = this.search;
@@ -212,10 +217,8 @@ export default {
             const data = this.selected;
             let url = '/brand';
             let formData = new FormData();
-
             formData.append("name", data.name);
-            formData.append("image", data.image);
-
+            if (data.image_file) formData.append("image", data.image_file);
             if (data.id) {
                 url += '/' + data.id;
                 formData.append("_method", "patch");
@@ -225,19 +228,10 @@ export default {
                 headers: { "Content-Type": "multipart/form-data" },
             })
                 .then((res) => {
-                    // this.alert_save = {
-                    //     type: "success",
-                    //     message: `novo registro inserido ID: ${res.data.id}`,
-                    // };
-                    this.modal.hide();
-                    this.toast({ title: 'sucesso', message: `novo registro ID ${res.data.id} inserido` })
+                    this.toast({ title: 'sucesso', message: `registro ID ${res.data.id} foi salvo` })
                     this.getBrands()
                 })
                 .catch((e) => {
-                    // this.alert_save = {
-                    //     type: "danger",
-                    //     message: e.response.data.errors,
-                    // };
                     console.log(e.response.data.errors);
                 });
         },
@@ -246,10 +240,6 @@ export default {
 
             api.delete(`/brand/${id}`)
                 .then((res) => {
-                    // this.$store.state.alert = {
-                    //     type: 'success',
-                    //     message: 'item foi deletado'
-                    // }
                     this.toast({ title: 'sucesso', message: 'o item foi deletado' })
                     this.getBrands();
                 })
