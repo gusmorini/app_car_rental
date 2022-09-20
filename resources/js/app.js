@@ -66,18 +66,17 @@ Vue.component(
 );
 
 /**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-/**
  * função global para formatar data
  */
 Vue.filter("formatDate", function (value) {
     return new Date(value).toLocaleDateString("pt-BR");
 });
 
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
 const app = new Vue({
     el: "#app",
     store,
