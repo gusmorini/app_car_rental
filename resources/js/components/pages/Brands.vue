@@ -39,7 +39,7 @@
                                             <img :src="'/storage/' + brand.image" width="25" />
                                         </td>
                                         <td>
-                                            {{ new Date(brand.created_at).toLocaleDateString("pt-BR") }}
+                                            {{ brand.created_at | formatDate }}
                                         </td>
                                         <td width="120">
                                             <a class="btn btn-sm btn-light" @click="setItem(brand)" href="#"
@@ -128,8 +128,6 @@
 </template>
 
 <script>
-// import api from "../../../../services/api";
-
 export default {
     data() {
         return {
@@ -253,8 +251,13 @@ export default {
 
     },
     mounted() {
-        // recupera lista de marcas
+        // recupera lista de marcas ao carregar a tela
         this.getBrands();
     },
+    filters: {
+        formatDate(value) {
+            return new Date(value).toLocaleDateString("pt-BR");
+        }
+    }
 };
 </script>
