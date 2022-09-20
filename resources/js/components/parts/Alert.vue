@@ -1,20 +1,17 @@
 <template>
   <div :class="classAlert" role="alert">
-    <template v-if="typeof data.message == 'object'">
-      <div v-for="e, key in data.message" :key="key">{{ e[0] }}</div>
-    </template>
-    <template v-else>
-      {{ data.message }}
-    </template>
+    <strong>{{title}}</strong>
+    <hr />
+    {{ message }}
   </div>
 </template>
 
 <script>
 export default {
-  props: ['type', 'data'],
+  props: ['type', 'message', 'title'],
   computed: {
     classAlert() {
-      return `alert alert-${this.data.type ? this.data.type : 'primary'}`;
+      return `alert alert-${this.type ? this.type : 'warning'}`;
     }
   }
 }
