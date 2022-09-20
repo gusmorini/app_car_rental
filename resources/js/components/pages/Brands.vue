@@ -254,10 +254,5 @@ export default {
         // recupera lista de marcas ao carregar a tela
         this.getBrands();
     },
-    filters: {
-        formatDate(value) {
-            return new Date(value).toLocaleDateString("pt-BR");
-        }
-    }
 };
 </script>

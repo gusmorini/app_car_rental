@@ -8,6 +8,7 @@ require("./bootstrap");
 
 window.Vue = require("vue").default;
 
+import Vue from "vue";
 import { store } from "./store";
 
 /**
@@ -69,6 +70,13 @@ Vue.component(
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+
+/**
+ * função global para formatar data
+ */
+Vue.filter("formatDate", function (value) {
+    return new Date(value).toLocaleDateString("pt-BR");
+});
 
 const app = new Vue({
     el: "#app",
