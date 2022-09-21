@@ -66,8 +66,6 @@
 </template>
 
 <script>
-import api from '../../../../services/api';
-
 export default {
     props: ["csrf_token"],
     data() {
@@ -76,13 +74,22 @@ export default {
             password: "",
         };
     },
+    computed: {
+        api() {
+            return this.$store.state.api;
+        },
+        token() {
+            return this.$store.state.token;
+        }
+    },
     methods: {
         async login(e) {
-            api.post('/login', { email: this.email, password: this.password })
+            this.api.post('/login', { email: this.email, password: this.password })
                 .then(({ data }) => {
                     const { token } = data;
                     if (token) {
-                        document.cookie = `token=${token};SameSite=Lax`;
+                        // document.cookie = `token=${token};SameSite=Lax`;
+                        this.token.saveToken(token);
                         e.target.submit();
                     }
                 })

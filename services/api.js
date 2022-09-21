@@ -1,32 +1,32 @@
 import axios from "axios";
-/**
- * função analiza os cookies e procura por token=
- * caso encontre monta o Bearer token completo
- */
-const getToken = () => {
-    let token = false;
-    document.cookie.split(";").forEach((value) => {
-        if (value.includes("token=")) {
-            token = "Bearer " + value.split("=")[1];
-        }
-    });
-    return token;
-};
+import token from "./token";
 
-/**
- * configuração base do axios
- */
-const config = {
+// instance axios
+const api = axios.create({
     baseURL: "/api/v1",
     timeout: 10000,
     headers: {
         Accept: "application/json",
-        Authorization: getToken(),
+        Authorization: token.getToken(),
     },
-};
+});
 
-// instance axios
-const api = axios.create(config);
+const verifyToken = ({ data, status }) => {
+    if (status == 401 && data.message.toLowerCase() == "token has expired") {
+        // refresh token
+        api.post("/refresh")
+            .then(({ data }) => {
+                console.log(data);
+                if (data.token) {
+                    // salva o token nos cookies
+                    token.saveToken(data.token);
+                    // refaz a requisição anterior
+                    window.location.reload();
+                }
+            })
+            .catch((e) => console.log(e));
+    }
+};
 
 /**
  * interceptando request instancia do axios
@@ -52,6 +52,8 @@ api.interceptors.response.use(
         return response;
     },
     function (error) {
+        // verifica token
+        verifyToken(error.response);
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
         return Promise.reject(error);
