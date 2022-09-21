@@ -6,11 +6,11 @@ import api from "../../services/api";
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
-    state: {
-        api,
-        selected: {},
-        alert: {},
-        toast,
-    },
-});
+const initialState = {
+    api,
+    selected: {},
+    alert: {},
+    toast,
+};
+
+export const store = new Vuex.Store({ state: initialState });
