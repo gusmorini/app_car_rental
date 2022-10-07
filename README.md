@@ -1,62 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+### pre-requisitos:
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+-   php 7.3 + php-mbstring php-zip php-dom php-mysql
+-   composer
+-   redis
+-   banco de dados mysql
+-   nodejs + npm
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+dentro do projeto copie o arquivo .env.example e renomeie para .env, configure os dados do ambiente local
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### comandos
 
-## Learning Laravel
+composer install
+npm install
+npm run dev
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+php artisan key:generate
+php artisan migrate
+php artisan storage:link
+php artisan serve
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+##### WEB: http://127.0.0.1:8000
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+##### API: http://127.0.0.1:8000/api/v1
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+### Endpoints API
 
-## Contributing
+[METHOD] - se refere a que tipo de método está presente na requisição
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+[API] - a esquerda da barra "/" será considerado a url da api no caso: http://127.0.0.1:8000/api/v1
 
-## Code of Conduct
+<i>na pasta insomnia segue o arquivo com as rotas já pre-configurado</i>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Auth
 
-## Security Vulnerabilities
+[POST] - /login: faz login e retorna o token de autenticação
+<img src="https://user-images.githubusercontent.com/32224862/194557051-6457bd98-1269-40d9-ad8d-516e23d8551e.jpg" />
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+[POST] - /me: retorna os dados do usuário logado
+<img src="https://user-images.githubusercontent.com/32224862/194557055-f3ba9c3e-584f-44e2-92c9-d13d2c44b15d.jpg" />
 
-## License
+[POST] - /refresh: faz o refresh token e retorna o token atualizado
+<img src="https://user-images.githubusercontent.com/32224862/194557056-ff372d39-043f-49da-bbf5-e06f489b7d93.jpg" />
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[POST] - /logout: desativa o token atual
+<img src="https://user-images.githubusercontent.com/32224862/194557054-c2c81e76-94f3-46fe-b46b-194bb92663a1.jpg" />
+
+### Brand
+
+[GET] - /brand: lista as marcas cadastradas
+<img src="https://user-images.githubusercontent.com/32224862/194557833-b9248fbf-1024-4f1c-a86d-a9597c0b9398.jpg" />
+
+[POST] - /brand: salva uma marca
+<img src="https://user-images.githubusercontent.com/32224862/194557827-548c0ffe-bb9d-42cd-bbad-88884dd8b806.jpg" />
+
+[GET] - /brand/{id}: retorna dados da marca com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194557819-7b5da511-b199-4135-b7bd-6934c187d57f.jpg" />
+
+[PATCH] - /brand/{id}: atualiza dados da marca com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194557830-5cea5b62-9514-4360-9566-c08812d203aa.jpg" />
+
+[DEL] - /brand/{id}: remove a marca com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194557831-a56c44d1-d756-4a87-9f83-23080a0ceda1.jpg" />
+
+### Model
+
+[GET] - /model: lista os modelos cadastrados
+<img src="https://user-images.githubusercontent.com/32224862/194558699-3411db6c-189a-456c-b5e3-961e43859429.jpg" />
+
+[POST] - /model: salva um modelo
+<img src="https://user-images.githubusercontent.com/32224862/194558702-de6760eb-a777-424b-b2c9-82da554eaa9b.jpg" />
+
+[GET] - /model/{id}: retorna dados do modelo com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194558701-283d05fa-1265-4ae8-8ee6-331c0aed0c21.jpg" />
+
+[PATCH] - /model/{id}: atualiza dados do modelo com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194558705-f4b4b0fd-fde8-4343-b7dc-d34e17246b14.jpg" />
+
+[DEL] - /model/{id}: remove o modelo com id informado
+<img src="https://user-images.githubusercontent.com/32224862/194558697-ad193442-3ca0-4560-8ae8-32f2908287d4.jpg" />
+
+### Car
+
+[GET] - /car: lista os carros cadastrados
+[POST] - /car: salva um carro
+[GET] - /car/{id}: retorna dados do carro com id informado
+[PATCH] - /car/{id}: atualiza dados do carro com id informado
+[DEL] - /car/{id}: remove o carro com id informado
+
+### Client
+
+[GET] - /client: lista os clentes cadastrados
+[POST] - /client: salva um cliente
+[GET] - /client/{id}: retorna dados do cliente com id informado
+[PATCH] - /client/{id}: atualiza dados do cliente com id informado
+[DEL] - /client/{id}: remove o cliente com id informado
+
+### Location
+
+[GET] - /location: lista os clentes cadastrados
+[POST] - /location: salva um cliente
+[GET] - /location/{id}: retorna dados do cliente com id informado
+[PATCH] - /location/{id}: atualiza dados do cliente com id informado
+[DEL] - /location/{id}: remove o cliente com id informado
