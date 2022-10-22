@@ -1,33 +1,49 @@
-### pre-requisitos:
+## Váriáveis de ambiente
 
--   php 7.3 + php-mbstring php-zip php-dom php-mysql
+_se **não** existir o arquivo **.env**:_
+
+copie o arquivo .env.example e renomeie para .env, configure os dados do ambiente local
+
+---
+
+## Ambiente docker (recomendado)
+
+```
+  docker-compose up -d
+  docker-compose exec app php artisan storage:link
+```
+
+---
+
+## Ambiente nativo
+
+##### pré-requisitos:
+
+-   php 7.4 + php-mbstring php-zip php-dom php-mysql
 -   composer
--   redis
 -   banco de dados mysql
 -   nodejs + npm
 
 ---
 
-dentro do projeto copie o arquivo .env.example e renomeie para .env, configure os dados do ambiente local
+##### comandos
 
----
-
-### comandos
-
+```
 composer install
 npm install
 npm run dev
-
 php artisan key:generate
 php artisan migrate
 php artisan storage:link
 php artisan serve
+```
 
 ---
 
-##### WEB: http://127.0.0.1:8000
-
-##### API: http://127.0.0.1:8000/api/v1
+| Aplicação | URL                          |
+| --------- | ---------------------------- |
+| WEB       | http://127.0.0.1:8000        |
+| API       | http://127.0.0.1:8000/api/v1 |
 
 ---
 
@@ -35,7 +51,7 @@ php artisan serve
 
 [METHOD] - se refere a que tipo de método está presente na requisição
 
-[API] - a esquerda da barra "/" será considerado a url da api no caso: http://127.0.0.1:8000/api/v1
+[API] - a esquerda da barra "/" será considerado a url da api no caso: [api](http://127.0.0.1:8000/api/v1)
 
 <i>na pasta insomnia segue o arquivo com as rotas já pre-configurado</i>
 
