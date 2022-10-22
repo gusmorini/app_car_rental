@@ -1,39 +1,20 @@
 version: "3.7"
 
 services:
-  # image project
   app:
-    image: php-composer-node
-    # container_name: php
-    # build:
-    #   # args:
-    #   #   user: banana
-    #   #   uid: 1000
-    #   context: .
-    #   dockerfile: Dockerfile
-    restart: unless-stopped
-    working_dir: /var/www/
-    volumes:
-      - .:/var/www
-    depends_on:
-      - redis
-
-  # nginx
-  nginx:
-    # container_name: nginx
-    image: nginx:alpine
-    restart: unless-stopped
+    image: docker.io/bitnami/laravel:8.5.24
     ports:
-      - "8000:80"
+      - "8000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_DATABASE=${DB_DATABASE}
     volumes:
-      - .:/var/www
-      - ./docker/nginx/:/etc/nginx/conf.d/
+      - ".:/app"
 
-  # db mysql
-  mysql:
-    # container_name: mysql
-    image: mysql:5.7.22
-    restart: always
+  db:
+    image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -45,30 +26,7 @@ services:
     volumes:
       - ./.docker/mysql:/var/lib/mysql
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-
-  # queue
-  #   queue:
-  #     container_name: queue
-  #     image: laravel-app
-  #     restart: unless-stopped
-  #     command: "php artisan queue:work"
-  #     volumes:
-  #       - .:/var/www
-  #     depends_on:
-  #       - redis
-  #       - app
-
-  #redis
-  redis:
-    # container_name: redis
-    image: redis:latest
-
-volumes:
-  .docker:
-  docker:
-  .:
+  # adminer:
+  #   image: adminer
+  #   ports:
+  #     - 8080:8080
