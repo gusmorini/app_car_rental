@@ -53,7 +53,7 @@ php artisan serve
 
 [API] - a esquerda da barra "/" será considerado a url da api no caso: [api](http://127.0.0.1:8000/api/v1)
 
-<i>na pasta insomnia segue o arquivo com as rotas já pre-configurado</i>
+<i>na pasta insomnia segue o arquivo com as rotas já pre-configuradas</i>
 
 ---
 
